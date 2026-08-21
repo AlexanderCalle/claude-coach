@@ -1,4 +1,4 @@
-# Training Zones & Field Testing
+# Training Zones, Field Testing & Strength Intensity
 
 Professional coaching requires accurate training zones derived from field tests, not arbitrary percentages of max HR.
 
@@ -9,7 +9,7 @@ LTHR is the heart rate at lactate threshold—the intensity you could sustain fo
 ### Running LTHR Zones (Friel 7-Zone System)
 
 | Zone | Name          | % of LTHR | Purpose                                | Feel                               |
-| ---- | ------------- | --------- | -------------------------------------- | ---------------------------------- |
+| ---- | ------------- | --------- | --------------------------------------- | ----------------------------------- |
 | 1    | Recovery      | < 81%     | Active recovery, warm-up/cool-down     | Very easy, could talk indefinitely |
 | 2    | Aerobic       | 81-89%    | Aerobic base building, fat oxidation   | Easy, full conversations           |
 | 3    | Tempo         | 90-93%    | Muscular endurance, aerobic capacity   | Moderate, sentences only           |
@@ -17,28 +17,6 @@ LTHR is the heart rate at lactate threshold—the intensity you could sustain fo
 | 5a   | Threshold     | 100-102%  | Lactate threshold improvement          | Very hard, race effort for 60min   |
 | 5b   | VO2max        | 103-106%  | VO2max development                     | Extremely hard, 3-8min max         |
 | 5c   | Anaerobic     | > 106%    | Neuromuscular power, speed             | Max effort, < 3min                 |
-
-### Cycling LTHR/Power Zones
-
-| Zone | Name          | % of LTHR | % of FTP | Purpose             |
-| ---- | ------------- | --------- | -------- | ------------------- |
-| 1    | Recovery      | < 81%     | < 55%    | Active recovery     |
-| 2    | Aerobic       | 81-89%    | 56-75%   | Endurance base      |
-| 3    | Tempo         | 90-93%    | 76-90%   | Muscular endurance  |
-| 4    | Sub-threshold | 94-99%    | 91-99%   | Threshold extension |
-| 5a   | Threshold     | 100-102%  | 100-105% | FTP improvement     |
-| 5b   | VO2max        | 103-106%  | 106-120% | VO2max intervals    |
-| 5c   | Anaerobic     | > 106%    | > 120%   | Neuromuscular power |
-
-### Swimming Zones (CSS-based)
-
-| Zone | Name      | Pace Relative to CSS | Purpose               |
-| ---- | --------- | -------------------- | --------------------- |
-| 1    | Recovery  | CSS + 15-20 sec/100m | Warm-up, cool-down    |
-| 2    | Aerobic   | CSS + 8-12 sec/100m  | Aerobic endurance     |
-| 3    | Tempo     | CSS + 3-6 sec/100m   | Lactate tolerance     |
-| 4    | Threshold | CSS pace             | Threshold development |
-| 5    | VO2max    | CSS - 3-5 sec/100m   | VO2max intervals      |
 
 ---
 
@@ -54,27 +32,6 @@ LTHR is the heart rate at lactate threshold—the intensity you could sustain fo
 
 _Note: Some coaches use final 20 minutes of a 30-min test to exclude early pacing errors._
 
-### Bike: 20-Minute FTP Test
-
-1. Warm up 20 minutes including 3x1min high-cadence spin-ups
-2. Ride 20 minutes at maximum sustainable power
-3. Average power × 0.95 = FTP
-4. Average HR = approximate cycling LTHR
-5. Cool down 10-15 minutes
-
-_Alternative: 2x8 minute test with 10min recovery; average power × 0.90 = FTP_
-
-### Swim: Critical Swim Speed (CSS) Test
-
-1. Warm up 400m easy with drills
-2. Swim 400m time trial (all-out, record time)
-3. Rest 10 minutes (active recovery)
-4. Swim 200m time trial (all-out, record time)
-5. CSS = (400m distance - 200m distance) / (400m time - 200m time)
-
-_Example: 400m in 6:40 (400 sec), 200m in 3:00 (180 sec)_
-_CSS = 200m / 220 sec = 0.909 m/sec = 1:50/100m_
-
 ### When to Retest
 
 - Every 6-8 weeks during base/build phases
@@ -88,12 +45,12 @@ _CSS = 200m / 220 sec = 0.909 m/sec = 1:50/100m_
 For athletes with known race times:
 
 | Zone | Name       | Description                  | How to Determine                                  |
-| ---- | ---------- | ---------------------------- | ------------------------------------------------- |
-| E    | Easy       | Daily running, long runs     | 59-74% VO2max; 1:00-1:30/km slower than threshold |
-| M    | Marathon   | Marathon race pace           | 75-84% VO2max; sustainable for 2-4 hours          |
-| T    | Threshold  | Tempo runs, cruise intervals | 83-88% VO2max; ~60min race pace                   |
-| I    | Interval   | VO2max development           | 95-100% VO2max; 3-5min repeats                    |
-| R    | Repetition | Speed, neuromuscular         | > 100% VO2max; short reps with full recovery      |
+| ---- | ---------- | ------------------------------ | ---------------------------------------------------- |
+| E    | Easy       | Daily running, long runs      | 59-74% VO2max; 1:00-1:30/km slower than threshold    |
+| M    | Marathon   | Marathon race pace            | 75-84% VO2max; sustainable for 2-4 hours             |
+| T    | Threshold  | Tempo runs, cruise intervals  | 83-88% VO2max; ~60min race pace                      |
+| I    | Interval   | VO2max development            | 95-100% VO2max; 3-5min repeats                       |
+| R    | Repetition | Speed, neuromuscular          | > 100% VO2max; short reps with full recovery         |
 
 **Pace Estimation from Threshold:**
 
@@ -104,15 +61,50 @@ For athletes with known race times:
 
 ---
 
-## Power-Based Training (Cycling)
+## Strength Training Intensity
 
-When power data is available, use power zones exclusively—they're more accurate than HR which lags and drifts.
+Runners don't need a formal 1RM-testing program the way powerlifters do — RPE (rate of perceived exertion) and RIR (reps in reserve) are sufficient and safer, especially early on. Use %1RM ranges only when the athlete already knows their numbers.
 
-| Workout Type | Zone             | Duration             | Recovery | Weekly Frequency |
-| ------------ | ---------------- | -------------------- | -------- | ---------------- |
-| Endurance    | 2                | 1-5 hours            | N/A      | 2-4x             |
-| Tempo        | 3                | 20-60 min continuous | N/A      | 1-2x             |
-| Sweet Spot   | 3-4 (88-93% FTP) | 2x20-30 min          | 5-10 min | 1-2x             |
-| Threshold    | 5a               | 2-4 x 8-15 min       | 5-8 min  | 1x               |
-| VO2max       | 5b               | 4-6 x 3-5 min        | 3-5 min  | 1x               |
-| Anaerobic    | 5c               | 6-10 x 30sec-2min    | 2-4 min  | 0-1x             |
+There are two strength goals this skill programs for (see `assessment.md` for how to ask which the athlete wants, and `workouts.md` for exercise selection for each):
+
+1. **Running support** — functional lower-body/core work whose job is injury resilience and running economy. Lower volume, phase-linked intensity.
+2. **Muscle building (hypertrophy)** — dedicated volume to grow muscle, typically upper-body-focused. Same RPE/RIR language, but volume is the primary driver of results, not just intensity.
+
+### Intensity by Session Type (applies to both goals)
+
+| Session Type | Load                                | RPE (1-10) | RIR      | When to Use                    |
+| ------------- | ------------------------------------ | ---------- | -------- | -------------------------------- |
+| Foundation    | Bodyweight / light load              | 5-6        | 4-5+     | Base phase, new lifters          |
+| Strength      | 70-85% 1RM (or "hard for 6-8 reps")  | 7-8        | 2-3      | Build phase, 1-2x/week           |
+| Power         | 75-90% 1RM, explosive intent         | 8-9        | 1-2      | Peak phase, 1x/week (running-support only — hypertrophy work doesn't use a power phase) |
+| Maintenance   | Light, 2 sets                        | 5-6        | 4-5+     | Race week, taper                 |
+
+### Hypertrophy: Volume Is the Primary Lever
+
+Unlike running-support strength — where phase and intensity do most of the work — muscle growth responds mainly to weekly volume per muscle group, at a moderate rep range and RPE.
+
+| Training Age        | Rep Range | RPE/RIR       | Sets per Muscle Group per Week |
+| ---------------------- | ----------- | --------------- | ---------------------------------- |
+| New to lifting (<1yr)  | 8-15        | 6-7 RPE / 3-4 RIR | 6-10                               |
+| Some experience (1-3yr)| 6-15        | 7-8 RPE / 2-3 RIR | 10-14                              |
+| Experienced (3+yr)     | 6-15        | 7-9 RPE / 1-3 RIR | 12-16                              |
+
+These are lower than typical bodybuilding-only volume guidelines (which can run 12-20+ sets/muscle/week) because the athlete is also running — running consumes systemic recovery capacity (sleep, glycogen, CNS fatigue) that a non-runner lifter wouldn't be spending. Start at the low end of the range and add volume only if recovery signals (see `load-management.md`) stay clean.
+
+**Progressive overload for hypertrophy**: add a rep, then add load, roughly every 1-2 weeks per exercise once all prescribed sets hit the target rep range at the target RPE. Don't chase both volume and load increases in the same week — same rule as running-support strength progression in `periodization.md`.
+
+### Reading RPE Without a Number to Reference
+
+| RPE | Feel                                             |
+| --- | -------------------------------------------------- |
+| 5-6 | Could do many more reps; light effort               |
+| 7   | Could do 3-4 more reps                              |
+| 8   | Could do 2-3 more reps                              |
+| 9   | Could do 1 more rep, maybe                          |
+| 10  | Maximal effort, no reps left — avoid outside testing |
+
+### When to Retest / Reassess
+
+- Reassess working weights every 4-6 weeks as strength improves
+- After any layoff longer than 2 weeks, restart at Foundation intensity
+- If form breaks down before the prescribed reps are done, the load is too heavy — back off rather than grind through it

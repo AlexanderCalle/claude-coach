@@ -1,226 +1,67 @@
-# SQL Queries for Athlete Assessment
+# COROS MCP Data for Athlete Assessment
 
-Run these queries using the claude-coach CLI:
+Pull athlete data using the `Coros_MCP` tools below. Unlike a database, these tools return raw records, not aggregates — you group, sum, and average them yourself as you read through the results. Dates for these tools are `yyyyMMdd`.
 
-```bash
-npx claude-coach query "YOUR_QUERY" --json
-```
+**Sport codes for this skill:**
 
-This works on any Node.js version (uses built-in SQLite on Node 22.5+, falls back to CLI otherwise).
+- Running: `[100, 101, 102, 103]` (outdoor/indoor/trail/track run). Add `104` (hike) if the athlete uses hiking as cross-training.
+- Strength: `[402]` (strength). Add `400` (gym cardio) if you want to catch circuit/cardio-style gym sessions too.
 
-## Current Form (Last 8 Weeks)
+**Pagination note:** `querySportRecords` defaults to `limit: 20`. Raise it well above that (e.g. 200-500) for any history query, and if the returned count equals your `limit`, narrow the date range and re-query so you're not silently missing activities.
 
-```sql
--- Weekly volume by sport
-SELECT
-  strftime('%Y-W%W', start_date) AS week,
-  sport_type,
-  COUNT(*) AS sessions,
-  ROUND(SUM(moving_time) / 3600.0, 1) AS hours,
-  ROUND(SUM(distance) / 1000.0, 1) AS km
-FROM activities
-WHERE start_date >= date('now', '-8 weeks')
-GROUP BY week, sport_type
-ORDER BY week DESC, sport_type;
+## Current Form (Last 8-12 Weeks)
 
--- Longest recent sessions by sport
-SELECT sport_type,
-  ROUND(MAX(moving_time) / 3600.0, 1) AS longest_hours,
-  ROUND(MAX(distance) / 1000.0, 1) AS longest_km
-FROM activities
-WHERE start_date >= date('now', '-12 weeks')
-GROUP BY sport_type;
+Call `querySportRecords` with a ~8-12 week `startDate`/`endDate` window, once with the running codes and once with the strength code.
 
--- Average session duration
-SELECT sport_type,
-  ROUND(AVG(moving_time) / 60.0, 0) AS avg_minutes,
-  ROUND(AVG(distance) / 1000.0, 1) AS avg_km,
-  COUNT(*) AS total_sessions
-FROM activities
-WHERE start_date >= date('now', '-8 weeks')
-GROUP BY sport_type;
+From the running records, compute yourself:
 
--- Weekly training load trend
-SELECT
-  strftime('%Y-W%W', start_date) AS week,
-  SUM(suffer_score) AS weekly_load,
-  ROUND(SUM(moving_time) / 3600.0, 1) AS total_hours
-FROM activities
-WHERE start_date >= date('now', '-12 weeks')
-GROUP BY week
-ORDER BY week;
-```
+- **Weekly volume**: group by ISO week, sum workout time (→ hours) and distance (→ km), count sessions
+- **Longest recent run**: max distance/duration across the window
+- **Average session duration/distance**
+
+From the strength records:
+
+- **Sessions per week**: count only — strength records don't carry meaningful distance, so track frequency and duration, not km
+- **Consistency**: is strength training happening at all, or is the record set empty? An empty or sparse strength history is itself an important limiter signal (see `assessment.md`)
+
+Then call `queryTrainingLoadAssessment` (with `days: 84` or so) for short-term load, long-term load, and load ratio — this is COROS's native equivalent of a weekly training-load trend for running, so prefer it over hand-computing one. Note it's HR/pace-driven and won't reflect strength-session fatigue — see `load-management.md`.
 
 ## Athletic Foundation (Lifetime / 2 Years)
 
-```sql
--- Race history (workout_type = 1)
-SELECT
-  strftime('%Y-%m', start_date) AS month,
-  name,
-  sport_type,
-  ROUND(distance / 1000.0, 1) AS km,
-  ROUND(moving_time / 3600.0, 1) AS hours
-FROM activities
-WHERE workout_type = 1
-ORDER BY start_date DESC;
+Call `querySportRecords` for running with a multi-year `startDate` (raise `limit` accordingly; if the result looks truncated, split the range into smaller windows and combine). Do the same for strength to see whether the athlete has ever trained consistently, even if they aren't now.
 
--- Lifetime peaks by sport
-SELECT sport_type,
-  ROUND(MAX(distance) / 1000.0, 1) AS max_km,
-  ROUND(MAX(moving_time) / 3600.0, 1) AS max_hours
-FROM activities
-GROUP BY sport_type;
+From the full running record set, compute:
 
--- Peak training weeks ever
-SELECT
-  strftime('%Y-W%W', start_date) AS week,
-  ROUND(SUM(moving_time) / 3600.0, 1) AS total_hours,
-  COUNT(*) AS sessions
-FROM activities
-GROUP BY week
-ORDER BY total_hours DESC
-LIMIT 5;
+- **Lifetime peaks**: max distance/duration across all returned records
+- **Peak training weeks ever**: group all records by week, sum duration, sort descending, take the top 5
+- **Training history depth**: min/max activity date, total activity count, lifetime distance
 
--- Training history depth
-SELECT sport_type,
-  MIN(start_date) AS first_activity,
-  MAX(start_date) AS last_activity,
-  COUNT(*) AS total_activities,
-  ROUND(SUM(distance) / 1000.0, 0) AS lifetime_km
-FROM activities
-GROUP BY sport_type;
-```
+**Race history**: COROS records don't carry a "race" flag the way some other platforms do. Scan activity `name`/`location` for anything that reads like a race (park run bib numbers, "marathon", "half," a location matching a known race course), or simply ask the athlete which sessions were races.
 
-## Strength Detection
+Also call `queryFitnessAssessmentOverview` — it returns VO2max, running level, threshold pace, and race predictions directly from COROS's own model, which is a strong standalone signal of athletic foundation.
 
-```sql
--- Efficiency: Low suffer_score per minute = strength
-SELECT sport_type,
-  ROUND(AVG(distance) / 1000.0, 1) AS avg_km,
-  ROUND(AVG(moving_time) / 60.0, 0) AS avg_minutes,
-  ROUND(AVG(suffer_score), 0) AS avg_suffer,
-  ROUND(AVG(suffer_score * 60.0 / moving_time), 2) AS suffer_per_minute,
-  ROUND(AVG(average_heartrate), 0) AS avg_hr
-FROM activities
-WHERE start_date >= date('now', '-6 months')
-  AND moving_time > 1800
-GROUP BY sport_type
-ORDER BY suffer_per_minute ASC;
+## Strength / Limiter Detection
 
--- Long sessions at low HR = aerobic strength
-SELECT sport_type,
-  COUNT(*) AS easy_long_sessions,
-  ROUND(AVG(distance) / 1000.0, 1) AS avg_km,
-  ROUND(AVG(moving_time) / 60.0, 0) AS avg_minutes,
-  ROUND(AVG(average_heartrate), 0) AS avg_hr
-FROM activities
-WHERE moving_time > 3600
-  AND average_heartrate < 145
-  AND start_date >= date('now', '-12 months')
-GROUP BY sport_type;
+COROS doesn't expose a per-activity effort score, and its load assessment is running-focused. Use HR, load, and recovery for running, plus training frequency for strength:
 
--- Last activity by sport (detect dormant skills)
-SELECT sport_type,
-  MAX(start_date) AS last_session,
-  ROUND(julianday('now') - julianday(MAX(start_date)), 0) AS days_ago,
-  COUNT(*) AS total_sessions_last_year
-FROM activities
-WHERE start_date >= date('now', '-1 year')
-GROUP BY sport_type
-ORDER BY last_session DESC;
-
--- Historical peaks (last 2 years)
-SELECT sport_type,
-  ROUND(MAX(distance) / 1000.0, 1) AS peak_km,
-  ROUND(MAX(moving_time) / 3600.0, 1) AS peak_hours,
-  MAX(start_date) AS when_achieved
-FROM activities
-WHERE start_date >= date('now', '-2 years')
-GROUP BY sport_type;
-```
+- For key long or hard runs, call `getActivityDetail` or `analyzeActivityDetail` (with `focus: "heart rate"` or similar) on that activity's `labelId`/`sportType` to get avg/max HR, pace, and elevation.
+- **Long runs at low HR relative to pace** = solid aerobic base.
+- **High HR / high perceived effort for a given pace** = fitness limiter.
+- Call `queryTrainingLoadAssessment` and `queryRecoveryStatus` together: rising load with lagging recovery is a sign the current running volume is outpacing recovery capacity.
+- **Strength as a limiter**: if the strength `querySportRecords` query over the last 3-6 months returns few or no sessions, treat that as a limiter on its own, independent of running fitness — most runners who get hurt or plateau are under-strength-trained, not under-run-trained.
+- **Dormant fitness**: compare the running record list's last-session date against its historical peak — a strong peak with no recent training is dormant fitness likely to return quickly.
 
 ## Schedule Preferences
 
-```sql
--- Preferred days for long rides (>90 min)
--- Day mapping: 0=Sunday, 1=Monday, ..., 6=Saturday
-SELECT
-  CASE strftime('%w', start_date)
-    WHEN '0' THEN 'Sunday'
-    WHEN '1' THEN 'Monday'
-    WHEN '2' THEN 'Tuesday'
-    WHEN '3' THEN 'Wednesday'
-    WHEN '4' THEN 'Thursday'
-    WHEN '5' THEN 'Friday'
-    WHEN '6' THEN 'Saturday'
-  END AS day_name,
-  COUNT(*) AS long_rides
-FROM activities
-WHERE sport_type = 'Ride'
-  AND moving_time > 5400
-GROUP BY strftime('%w', start_date)
-ORDER BY long_rides DESC;
+From the `querySportRecords` results (each record includes a start timestamp), work out the day of week for:
 
--- Preferred days for long runs (>60 min)
-SELECT
-  CASE strftime('%w', start_date)
-    WHEN '0' THEN 'Sunday'
-    WHEN '1' THEN 'Monday'
-    WHEN '2' THEN 'Tuesday'
-    WHEN '3' THEN 'Wednesday'
-    WHEN '4' THEN 'Thursday'
-    WHEN '5' THEN 'Friday'
-    WHEN '6' THEN 'Saturday'
-  END AS day_name,
-  COUNT(*) AS long_runs
-FROM activities
-WHERE sport_type IN ('Run', 'Trail Run')
-  AND moving_time > 3600
-GROUP BY strftime('%w', start_date)
-ORDER BY long_runs DESC;
+- Long runs (>60 min)
+- Strength sessions (any duration) — which days does the athlete currently lift, if at all?
 
--- Preferred days for swim sessions
-SELECT
-  CASE strftime('%w', start_date)
-    WHEN '0' THEN 'Sunday'
-    WHEN '1' THEN 'Monday'
-    WHEN '2' THEN 'Tuesday'
-    WHEN '3' THEN 'Wednesday'
-    WHEN '4' THEN 'Thursday'
-    WHEN '5' THEN 'Friday'
-    WHEN '6' THEN 'Saturday'
-  END AS day_name,
-  COUNT(*) AS swim_sessions
-FROM activities
-WHERE sport_type = 'Swim'
-GROUP BY strftime('%w', start_date)
-ORDER BY swim_sessions DESC;
-```
+Tally counts per weekday yourself from the returned list — there's no GROUP BY, so just walk the records.
 
 ## HR / Zone Data
 
-```sql
--- Average HR by sport
-SELECT
-  sport_type,
-  ROUND(AVG(average_heartrate), 0) AS avg_hr,
-  ROUND(AVG(max_heartrate), 0) AS avg_max_hr,
-  COUNT(*) AS sessions
-FROM activities
-WHERE average_heartrate IS NOT NULL
-  AND start_date >= date('now', '-8 weeks')
-GROUP BY sport_type;
-
--- HR distribution for zone estimation
-SELECT
-  sport_type,
-  ROUND(MIN(average_heartrate), 0) AS min_avg_hr,
-  ROUND(AVG(average_heartrate), 0) AS mean_avg_hr,
-  ROUND(MAX(average_heartrate), 0) AS max_avg_hr,
-  ROUND(MAX(max_heartrate), 0) AS highest_max_hr
-FROM activities
-WHERE average_heartrate IS NOT NULL
-  AND start_date >= date('now', '-12 weeks')
-GROUP BY sport_type;
-```
+- Call `queryAvgHeartRate` and `queryRestingHeartRate` over the last 8-12 weeks for daily HR trends.
+- Call `queryFitnessAssessmentOverview` for COROS's own threshold pace and VO2max — prefer this over deriving zones purely from average activity HR, since it's a purpose-built assessment rather than an estimate.
+- Call `queryDailyHealthData` (and `querySleepData`/`querySleepHrv`/`queryStressLevel` if more detail is useful) for sleep and stress context that feeds into load/readiness decisions in Phase 3.
