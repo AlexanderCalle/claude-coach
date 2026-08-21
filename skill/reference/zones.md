@@ -65,14 +65,33 @@ For athletes with known race times:
 
 Runners don't need a formal 1RM-testing program the way powerlifters do — RPE (rate of perceived exertion) and RIR (reps in reserve) are sufficient and safer, especially early on. Use %1RM ranges only when the athlete already knows their numbers.
 
-### Intensity by Session Type
+There are two strength goals this skill programs for (see `assessment.md` for how to ask which the athlete wants, and `workouts.md` for exercise selection for each):
+
+1. **Running support** — functional lower-body/core work whose job is injury resilience and running economy. Lower volume, phase-linked intensity.
+2. **Muscle building (hypertrophy)** — dedicated volume to grow muscle, typically upper-body-focused. Same RPE/RIR language, but volume is the primary driver of results, not just intensity.
+
+### Intensity by Session Type (applies to both goals)
 
 | Session Type | Load                                | RPE (1-10) | RIR      | When to Use                    |
 | ------------- | ------------------------------------ | ---------- | -------- | -------------------------------- |
 | Foundation    | Bodyweight / light load              | 5-6        | 4-5+     | Base phase, new lifters          |
 | Strength      | 70-85% 1RM (or "hard for 6-8 reps")  | 7-8        | 2-3      | Build phase, 1-2x/week           |
-| Power         | 75-90% 1RM, explosive intent         | 8-9        | 1-2      | Peak phase, 1x/week              |
+| Power         | 75-90% 1RM, explosive intent         | 8-9        | 1-2      | Peak phase, 1x/week (running-support only — hypertrophy work doesn't use a power phase) |
 | Maintenance   | Light, 2 sets                        | 5-6        | 4-5+     | Race week, taper                 |
+
+### Hypertrophy: Volume Is the Primary Lever
+
+Unlike running-support strength — where phase and intensity do most of the work — muscle growth responds mainly to weekly volume per muscle group, at a moderate rep range and RPE.
+
+| Training Age        | Rep Range | RPE/RIR       | Sets per Muscle Group per Week |
+| ---------------------- | ----------- | --------------- | ---------------------------------- |
+| New to lifting (<1yr)  | 8-15        | 6-7 RPE / 3-4 RIR | 6-10                               |
+| Some experience (1-3yr)| 6-15        | 7-8 RPE / 2-3 RIR | 10-14                              |
+| Experienced (3+yr)     | 6-15        | 7-9 RPE / 1-3 RIR | 12-16                              |
+
+These are lower than typical bodybuilding-only volume guidelines (which can run 12-20+ sets/muscle/week) because the athlete is also running — running consumes systemic recovery capacity (sleep, glycogen, CNS fatigue) that a non-runner lifter wouldn't be spending. Start at the low end of the range and add volume only if recovery signals (see `load-management.md`) stay clean.
+
+**Progressive overload for hypertrophy**: add a rep, then add load, roughly every 1-2 weeks per exercise once all prescribed sets hit the target rep range at the target RPE. Don't chase both volume and load increases in the same week — same rule as running-support strength progression in `periodization.md`.
 
 ### Reading RPE Without a Number to Reference
 

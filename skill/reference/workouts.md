@@ -73,9 +73,14 @@ Great for teaching pace discipline and finishing strong
 
 ## Strength Training
 
-Strength work is core to the plan, not an add-on — it drives running economy, injury resilience, and late-race durability. Include 2 sessions per week in base/build, dropping to 1x/week (peak) or maintenance (taper). See `zones.md` for intensity/RPE guidance by session type.
+Strength work is core to the plan, not an add-on. It serves two possible goals — ask the athlete which they want (see `assessment.md`):
 
-### Workout Types
+1. **Running support** (default for every plan, at least at a light level): functional lower-body/core work whose job is injury resilience and running economy.
+2. **Muscle building (hypertrophy)**: dedicated volume to grow muscle, typically upper-body-focused since it interferes least with running. Layer this on top of running support, don't replace it.
+
+Include 2 sessions per week in base/build, dropping to 1x/week (peak) or maintenance (taper) for running-support work. Hypertrophy work can hold steady through more of the plan since it interferes less with running (see "Timing Considerations" below). See `zones.md` for intensity/RPE/volume guidance for both goals.
+
+### Workout Types (Running Support)
 
 | Session Type | Structure                          | When to Use             |
 | ------------- | -------------------------------------- | ---------------------------- |
@@ -84,7 +89,7 @@ Strength work is core to the plan, not an add-on — it drives running economy, 
 | Power         | 3-4 sets x 4-6 reps, explosive        | Peak phase, 1x/week          |
 | Maintenance   | 2 sets x 8-10 reps, light             | Race week, taper             |
 
-### Core Exercises (Every Session)
+### Core Exercises (Every Session, Either Goal)
 
 ```
 Plank: 3 x 45-60s
@@ -93,7 +98,7 @@ Dead bug: 2 x 12 each side
 Bird dog: 2 x 10 each side
 ```
 
-### Runner-Specific Exercises
+### Runner-Specific Exercises (Running Support)
 
 | Focus               | Exercises                                          | Why                                             |
 | --------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
@@ -102,7 +107,7 @@ Bird dog: 2 x 10 each side
 | Impact/injury resilience | Single-leg squats, lateral band walks, ankle hops   | Balance, proprioception, tendon resilience            |
 | Power/stride drive    | Bounding, box jumps, jump squats (peak phase only)     | Neuromuscular power that translates to faster turnover |
 
-### Sample Session (45min)
+### Sample Running-Support Session (45min)
 
 ```
 Warm-up: 5min light cardio, leg swings, hip circles
@@ -127,12 +132,54 @@ Cool-down: 5min stretching
 | Shin splints           | Weak tibialis anterior, high impact load | Toe raises, gradual mileage progression       |
 | Achilles issues        | Weak/stiff calf complex                | Eccentric calf raises, gradual loading         |
 
+---
+
+## Muscle Building (Hypertrophy / Upper Body)
+
+For athletes who want to build muscle alongside their running, not just support it. See `zones.md` for the volume/rep-range guidance driving this — the short version: moderate reps (6-15), RPE 7-9, and enough weekly sets per muscle group matter more here than the phase-linked intensity progression used for running support.
+
+### Exercise Selection by Muscle Group
+
+| Muscle Group | Push/Pull | Exercises                                          |
+| -------------- | ----------- | -------------------------------------------------------- |
+| Chest          | Push        | Bench press, dumbbell press, push-ups, dips              |
+| Back           | Pull        | Pull-ups/lat pulldown, barbell/dumbbell rows, face pulls  |
+| Shoulders      | Push        | Overhead press, lateral raise, rear-delt fly              |
+| Biceps         | Pull        | Barbell curl, dumbbell curl, hammer curl                  |
+| Triceps        | Push        | Triceps pushdown, overhead extension, close-grip press    |
+| Grip/forearms  | Both        | Farmer's carries (also functional for running posture)    |
+
+### Sample Upper-Body Hypertrophy Session (45-60min)
+
+```
+Warm-up: 5min light cardio, band pull-aparts, arm circles
+Main:
+  Bench press: 4 x 8-10
+  Bent-over row: 4 x 8-10
+  Overhead press: 3 x 10-12
+  Lat pulldown: 3 x 10-12
+  Bicep curl: 3 x 12-15
+  Triceps pushdown: 3 x 12-15
+Cool-down: 5min stretching (chest, lats, shoulders)
+```
+
+### Structuring the Week Around Both Goals
+
+| Sessions/week available | Split                                                              |
+| -------------------------- | ---------------------------------------------------------------------- |
+| 2                           | Alternate: 1 running-support (lower/core), 1 upper-body hypertrophy    |
+| 3                           | 1-2 running-support (lower/core), 1-2 upper-body hypertrophy           |
+| 4+                          | Dedicate specific days per goal; keep running-support non-negotiable, add hypertrophy volume on top |
+
+Don't let hypertrophy volume crowd out running-support work — the lower-body/core injury-prevention sessions stay in every plan regardless of how much upper-body work gets added.
+
 ### Timing Considerations
 
-- **Before running**: Light activation only (bands, bodyweight) — save the heavy work for after
-- **After easy runs**: Full strength session OK
-- **Separate from quality runs**: pair with an easy run day, or do strength after a hard run rather than before it; avoid heavy lower-body work the day *before* a quality session
-- **Taper**: Reduce to maintenance (2 sets, lighter weight)
+- **Before running**: Light activation only (bands, bodyweight) — save heavy lower-body work for after
+- **After easy runs**: Full strength session OK, either goal
+- **Running-support (lower-body)**: pair with an easy run day, or do it after a hard run rather than before it; avoid heavy lower-body work the day *before* a quality session
+- **Upper-body hypertrophy**: interferes far less with running mechanics than lower-body work — it can be scheduled more flexibly, including on hard running days, without the same next-day-quality-run concern. Local arm/chest/back soreness rarely affects running form.
+- **Taper**: Running-support drops to maintenance (2 sets, lighter weight); hypertrophy volume can also drop 30-40% in race week to keep total systemic fatigue down, even though it isn't directly limiting running performance
 
 ---
 
@@ -152,9 +199,10 @@ Pairing a run and a strength session on the same day is common and time-efficien
 
 1. **Never two hard sessions on the same day** - One hard, one easy/moderate
 2. **Sequence matters** - if both are meaningful efforts, run first (fatigue affects lifting form less than it affects running mechanics), unless it's a heavy lower-body day, in which case do it well before or after the run
-3. **Fuel between sessions** - Carbs and protein within 30min of the first session
-4. **Sleep matters more** - Skip the double if sleep-deprived
-5. **Consider weekly load** - Doubles add stress; reduce elsewhere if needed
+3. **Upper-body hypertrophy is the most flexible pairing** - it can go on the same day as a hard or quality run with little downside, unlike heavy lower-body work
+4. **Fuel between sessions** - Carbs and protein within 30min of the first session
+5. **Sleep matters more** - Skip the double if sleep-deprived
+6. **Consider weekly load** - Doubles add stress; reduce elsewhere if needed
 
 ### Sample Double Days
 
@@ -162,7 +210,7 @@ Pairing a run and a strength session on the same day is common and time-efficien
 
 ```
 AM: 45min tempo run (quality)
-PM: 30min core + upper body strength (easy)
+PM: 30min core + upper-body hypertrophy (moderate - fine even on a hard run day)
 ```
 
 **Time-Crunched Weekday:**

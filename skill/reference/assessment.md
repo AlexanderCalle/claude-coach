@@ -73,15 +73,17 @@ _"The athlete's runs show 10km at avg HR 150 with recovery status back to baseli
 
 4. **Limiter identification**: _"I don't see any strength training in your history. Would you say that's accurate, and is it something you're open to adding?"_
 
-5. **Dormant fitness**: _"I see you haven't run consistently in 4 months but had strong fitness earlier this year. Do you expect that to come back quickly?"_
+5. **Strength goal**: _"When you think about strength training, is it mainly to support your running and stay injury-free, or are you also interested in building muscle — upper body especially?"_ This determines which track from `workouts.md` to draw from (running-support only, or running-support plus hypertrophy). Most athletes want both; some want running-support only. Don't assume — ask directly, since it changes exercise selection and weekly volume.
 
-6. **Constraints**: _"Any injuries, schedule constraints, upcoming travel, or equipment limitations I should know about?"_ (Gym access, home equipment, bodyweight-only)
+6. **Dormant fitness**: _"I see you haven't run consistently in 4 months but had strong fitness earlier this year. Do you expect that to come back quickly?"_
 
-7. **Goals**: _"Do you have a time goal, or is finishing the main focus?"_
+7. **Constraints**: _"Any injuries, schedule constraints, upcoming travel, or equipment limitations I should know about?"_ (Gym access, home equipment, bodyweight-only)
 
-8. **Preferences**: _"Are there workouts you love or hate? Do you enjoy lifting, or would you rather keep strength sessions short and simple?"_
+8. **Goals**: _"Do you have a time goal, or is finishing the main focus?"_
 
-9. **Long run and strength scheduling**: _"Which days work best for your long run and strength sessions? I see from your data you typically do long runs on [day]."_ (Check their historical patterns first—look for runs >60min and any strength sessions to infer preferred days)
+9. **Preferences**: _"Are there workouts you love or hate? Do you enjoy lifting, or would you rather keep strength sessions short and simple?"_
+
+10. **Long run and strength scheduling**: _"Which days work best for your long run and strength sessions? I see from your data you typically do long runs on [day]."_ (Check their historical patterns first—look for runs >60min and any strength sessions to infer preferred days)
 
 ### Inferring Long Run and Strength Scheduling
 
@@ -114,8 +116,9 @@ single-leg stability. Once that's a habit, we'll build both together.
 Before I create the plan:
 1. Does this assessment match how you feel?
 2. Any injuries or constraints I should know about?
-3. Do you have gym access, or should sessions be bodyweight/home-equipment based?
-4. Do you have a time goal, or is finishing the focus?
+3. Is strength training mainly about supporting your running, or do you also want to build muscle (upper body especially)?
+4. Do you have gym access, or should sessions be bodyweight/home-equipment based?
+5. Do you have a time goal, or is finishing the focus?
 ```
 
 ### Why Validation Matters

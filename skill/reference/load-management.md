@@ -29,6 +29,8 @@ Strength sessions don't map cleanly onto TSS/rTSS; there's no established power/
 - Treat a heavy lower-body strength session as real fatigue toward the next day's running, even if COROS's load numbers don't reflect it — don't schedule a quality run the day immediately after a heavy squat/deadlift-style session.
 - When reading `queryRecoveryStatus`, remember it's also endurance-focused: cross-check it against how the athlete actually reports feeling after strength days, especially early in a new strength habit when soreness runs high.
 
+**Hypertrophy volume specifically**: upper-body work has much lower *direct* interference with running mechanics than lower-body strength (see `workouts.md`), so it's tempting to add it freely. It still isn't free, though — every added set draws on the same shared pools of sleep, nutrition, and systemic recovery capacity that running is also drawing on. Count sRPE from hypertrophy sessions in the athlete's total weekly load, and if recovery signals (RHR, HRV, subjective scores below) start trending worse after hypertrophy volume increases, trim the hypertrophy work before touching running — running is the plan's primary goal.
+
 ---
 
 ## Chronic Training Load (CTL) - "Fitness"

@@ -9,14 +9,16 @@ Divide the training period into phases:
 - Build aerobic capacity
 - Increase volume gradually (max 10% per week)
 - Mostly Zone 2 (conversational pace)
-- Strength training: Foundation intensity (see `zones.md`) — build movement patterns before adding load
+- Running-support strength: Foundation intensity (see `zones.md`) — build movement patterns before adding load
+- Hypertrophy (if the athlete wants it): this is the best phase to prioritize it — running demands are lower, so more weekly volume/sessions can go toward muscle building
 - Focus on running form and consistency
 
 ### 2. Build Phase (30-40% of available time)
 
 - Introduce intensity (tempo, threshold work)
 - Peak volume weeks occur here
-- Strength training: progress to Strength intensity (70-85% 1RM or RPE 7-8), 1-2x/week
+- Running-support strength: progress to Strength intensity (70-85% 1RM or RPE 7-8), 1-2x/week
+- Hypertrophy: hold steady volume — it interferes little with running, so it doesn't need to shrink just because running volume is rising
 - Race-simulation long runs at goal pace segments
 
 ### 3. Peak/Race-Specific Phase (10-15% of available time)
@@ -24,13 +26,15 @@ Divide the training period into phases:
 - Reduce volume, maintain intensity
 - Race-pace work
 - Course-specific preparation (hills, terrain matching race course)
-- Strength training: shift to Power intensity or hold Strength intensity, 1x/week — don't introduce new heavy loads this close to race day
+- Running-support strength: shift to Power intensity or hold Strength intensity, 1x/week — don't introduce new heavy loads this close to race day
+- Hypertrophy: can still hold steady, but trim 10-20% if recovery signals (see `load-management.md`) start slipping
 
 ### 4. Taper (1-3 weeks depending on event)
 
 - Significant volume reduction (40-60%)
 - Maintain some intensity
-- Strength training: drop to Maintenance intensity (light, 2 sets)
+- Running-support strength: drop to Maintenance intensity (light, 2 sets)
+- Hypertrophy: drop volume 30-40% in the final 1-2 weeks — not because it directly hurts running, but to keep total systemic fatigue low heading into race day
 - Focus on rest, nutrition, mental prep
 
 ---

@@ -54,19 +54,24 @@ If they choose manual entry, gather the following through conversation. Ask natu
 - Current strength training: "Are you doing any strength training right now? How often, and what kind (gym machines/free weights, bodyweight, bands)?"
 - Consistency: "How many weeks have you been training consistently?"
 
-**2. Performance Benchmarks (whatever they know)**
+**2. Strength Training Goal (always ask this explicitly)**
+
+- "When you think about strength training, is it mainly to support your running and stay injury-free, or are you also interested in building muscle — upper body especially?"
+- This decides which track from `workouts.md` to use: running-support only, or running-support plus hypertrophy work. Most athletes want both.
+
+**3. Performance Benchmarks (whatever they know)**
 
 - Run: Threshold pace, or recent race times (5K, 10K, half marathon, marathon)
 - Heart rate: Max HR and/or lactate threshold HR if known
-- Strength: Comfortable working weights for squat/deadlift/hinge-style movements if they lift, or "bodyweight only" if not
+- Strength: Comfortable working weights for squat/deadlift/bench/row-style movements if they lift, or "bodyweight only" if not
 
-**3. Training Background**
+**4. Training Background**
 
 - Years running, years (if any) doing structured strength training
 - Previous races: events completed with approximate times
 - Recent breaks: any time off in the past 6 months, and why
 
-**4. Constraints**
+**5. Constraints**
 
 - Injuries or health considerations — especially common running injuries (IT band, plantar fasciitis, shin splints, runner's knee, Achilles issues)
 - Schedule limitations (travel, work, family)
@@ -318,7 +323,7 @@ Here's the structure:
       "endDate": "2026-06-07",
       "phase": "Base",
       "focus": "Establish routine",
-      "targetHours": 5,
+      "targetHours": 6.5,
       "isRecoveryWeek": false,
       "days": [
         {
@@ -370,13 +375,42 @@ Here's the structure:
               "completed": false
             }
           ]
+        },
+        {
+          "date": "2026-06-04",
+          "dayOfWeek": "Thursday",
+          "workouts": [
+            {
+              "id": "w1-thu-run",
+              "sport": "run",
+              "type": "endurance",
+              "name": "Easy Aerobic Run",
+              "description": "Conversational pace",
+              "durationMinutes": 35,
+              "distanceMeters": 5500,
+              "primaryZone": "Zone 2",
+              "targetHR": { "low": 139, "high": 153 },
+              "completed": false
+            },
+            {
+              "id": "w1-thu-hypertrophy",
+              "sport": "strength",
+              "type": "technique",
+              "name": "Upper Body Hypertrophy",
+              "description": "Athlete's secondary strength goal - runs alongside running-support work, not instead of it",
+              "durationMinutes": 50,
+              "primaryZone": "RPE 7-8",
+              "humanReadable": "Warm-up: 5min light cardio, band pull-aparts, arm circles\nBench press: 4x8-10\nBent-over row: 4x8-10\nOverhead press: 3x10-12\nLat pulldown: 3x10-12\nBicep curl: 3x12-15\nTriceps pushdown: 3x12-15\nCool-down: 5min stretching",
+              "completed": false
+            }
+          ]
         }
       ],
       "summary": {
-        "totalHours": 5,
+        "totalHours": 6.5,
         "bySport": {
-          "run": { "sessions": 4, "hours": 4.25, "km": 40 },
-          "strength": { "sessions": 2, "hours": 1.5 }
+          "run": { "sessions": 5, "hours": 5, "km": 45 },
+          "strength": { "sessions": 3, "hours": 2.3 }
         }
       }
     }
@@ -453,8 +487,9 @@ After both files are created, tell the user:
 6. **Taper adequately**: Most athletes under-taper; trust the fitness you've built
 7. **Practice nutrition**: Long runs should include race-day fueling practice
 8. **Strength training is core, not optional**: 2x/week minimum year-round for injury prevention and running economy; see `workouts.md` for runner-specific programming
-9. **Sequence strength and running deliberately**: pair a hard run with lower-body strength on the same or adjacent day rather than spreading quality stress across the whole week; pair easy runs freely with any strength session
-10. **Never schedule two hard running days back-to-back**: separate quality sessions (tempo, intervals, long run) by at least 48 hours
+9. **Ask about the strength goal explicitly**: running-support only, or running-support plus muscle building — don't assume either way, since it changes exercise selection and volume
+10. **Sequence strength and running deliberately**: pair a hard run with lower-body strength on the same or adjacent day rather than spreading quality stress across the whole week; upper-body hypertrophy work pairs flexibly with any day, hard or easy
+11. **Never schedule two hard running days back-to-back**: separate quality sessions (tempo, intervals, long run) by at least 48 hours
 
 ---
 
