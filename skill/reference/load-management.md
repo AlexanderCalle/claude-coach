@@ -2,6 +2,8 @@
 
 Professional coaches quantify training stress to manage fatigue, prevent overtraining, and peak for races.
 
+**COROS-native shortcut:** `queryTrainingLoadAssessment` returns short-term load, long-term load, and a load ratio directly — the concepts below (TSS/CTL/ATL/TSB) map onto that output (see "Running TSS" below) and are most useful for reasoning about targets and phase structure, not for re-deriving numbers COROS already gives you.
+
 ## Training Stress Score (TSS)
 
 TSS measures the physiological cost of a workout. For cycling with power:
@@ -27,10 +29,10 @@ Where:
 
 ### Running TSS (rTSS)
 
-Estimated from pace and HR. Use Strava's suffer_score as a proxy:
+Estimated from pace and HR. Prefer COROS's own `queryTrainingLoadAssessment` over hand-computing this where possible:
 
-- suffer_score ≈ rTSS for most athletes
-- Compare suffer_score per hour across sessions to gauge relative intensity
+- Short-term load ≈ ATL, long-term load ≈ CTL, and the load ratio behaves like a TSB-style balance signal (rising ratio = fatigue building, falling/low ratio = fresher)
+- When you need a per-session comparison, use avg HR relative to LTHR-based zones (see `zones.md`) as the proxy for relative intensity, and compare that across sessions of similar duration
 
 ### Swim TSS (sTSS)
 

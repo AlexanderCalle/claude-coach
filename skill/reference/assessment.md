@@ -29,20 +29,22 @@ Their plan should focus on **rebuilding** (faster progression possible) rather t
 
 ## Interpreting Strength Signals
 
-| Signal                              | Interpretation                       |
-| ----------------------------------- | ------------------------------------ |
-| Long sessions at low HR             | Excellent aerobic base in that sport |
-| Low suffer_score per minute         | Sport feels easy to them (strength)  |
-| High suffer_score per minute        | Sport is hard for them (limiter)     |
-| Historical peaks >> recent activity | Dormant fitness, will return quickly |
-| No historical data for a sport      | True beginner, needs careful build   |
-| Consistent high volume              | Sport they enjoy and prioritize      |
+| Signal                                        | Interpretation                       |
+| ---------------------------------------------- | ------------------------------------- |
+| Long sessions at low HR                       | Excellent aerobic base in that sport |
+| Low avg HR relative to pace/effort            | Sport feels easy to them (strength)  |
+| High avg HR relative to pace/effort           | Sport is hard for them (limiter)     |
+| Load stays high, recovery lags after a sport  | That sport is a limiter              |
+| Historical peaks >> recent activity           | Dormant fitness, will return quickly |
+| No historical data for a sport                | True beginner, needs careful build   |
+| Consistent high volume                        | Sport they enjoy and prioritize      |
 
-**Limiter identification**: Compare suffer_per_minute and average HR across sports. The sport with highest relative effort for similar durations is the limiter.
+**Limiter identification**: Pull avg/max HR per activity via `getActivityDetail`/`analyzeActivityDetail` and compare relative effort (HR for a given pace or duration) across sports, alongside `queryTrainingLoadAssessment`/`queryRecoveryStatus`. The sport with the highest relative effort for similar durations, or the one that drives load up without fast recovery, is the limiter.
 
 ## Example Interpretation
 
-_"The athlete's swim data shows 5000m sessions at avg HR 125 with suffer_score of 45. Their runs show 10km at avg HR 165 with suffer_score of 120. Swimming is clearly a strength (low effort, long duration). Running is a limiter (high effort, shorter duration). Even though they haven't swum in 4 months, that fitness will return quickly with a few weeks of swimming. The plan should prioritize run development while maintaining swim fitness with modest volume."_
+_"The athlete's swim data shows 5000m sessions at avg HR 125. Their runs show 10km at avg HR 165, with recovery status still elevated the next day. Swimming is clearly a strength (low effort, long duration, quick recovery). Running is a limiter (high effort, shorter duration, slower recovery). Even though they haven't swum in 4 months, that fitness will return quickly with a few weeks of swimming. The plan should prioritize run development while maintaining swim fitness with modest volume."_
+
 
 ## Event Requirements Reference
 
@@ -85,38 +87,18 @@ _"The athlete's swim data shows 5000m sessions at avg HR 125 with suffer_score o
 
 ### Inferring Long Session Preferences
 
-Before asking, analyze their Strava data to identify patterns:
+Before asking, analyze their COROS data to identify patterns:
 
-```sql
--- Find preferred days for long rides (>90 min)
-SELECT
-  strftime('%w', start_date) as day_of_week,
-  COUNT(*) as count
-FROM activities
-WHERE sport_type = 'Ride'
-  AND moving_time > 5400
-GROUP BY day_of_week
-ORDER BY count DESC;
-
--- Find preferred days for long runs (>60 min)
-SELECT
-  strftime('%w', start_date) as day_of_week,
-  COUNT(*) as count
-FROM activities
-WHERE sport_type IN ('Run', 'Trail Run')
-  AND moving_time > 3600
-GROUP BY day_of_week
-ORDER BY count DESC;
-```
-
-Day mapping: 0=Sunday, 1=Monday, ..., 6=Saturday
+- Call `querySportRecords` with `sportTypeCodes: [200, 201, 202, 203, 204, 205, 299]` (bike) and `minDurationMinutes: 90` over the last several months.
+- Call `querySportRecords` with `sportTypeCodes: [100, 101, 102, 103]` (run) and `minDurationMinutes: 60` over the same window.
+- For each result set, read the day of week off each record's start timestamp and tally counts yourself — there's no GROUP BY, so just walk the list.
 
 Use this data to make an informed suggestion: _"I notice you typically do your long rides on Saturday and long runs on Sunday. Should we keep that pattern?"_
 
 ### Example Dialogue
 
 ```
-Based on your Strava data, here's my initial assessment:
+Based on your COROS data, here's my initial assessment:
 
 **Strengths:**
 - Swimming: Your 5000m sessions at HR 125 suggest excellent swim fitness.
