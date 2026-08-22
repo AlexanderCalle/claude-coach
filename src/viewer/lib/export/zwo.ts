@@ -16,8 +16,8 @@ import type {
   StructuredWorkout,
   WorkoutStep,
   IntervalSet,
-} from "../../../schema/training-plan.js";
-import type { Settings } from "../../stores/settings.js";
+} from "../../../schema/training-plan";
+import type { Settings } from "../../stores/settings";
 
 /**
  * Check if a sport is supported by Zwift export

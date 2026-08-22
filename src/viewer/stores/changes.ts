@@ -1,5 +1,4 @@
-import { planData } from "./plan.js";
-import type { TrainingPlan, Workout } from "../../schema/training-plan.js";
+import type { TrainingPlan, Workout } from "../../schema/training-plan";
 
 /**
  * Tracks all user modifications to the plan.
@@ -19,8 +18,6 @@ export interface PlanChanges {
   added: Record<string, { date: string; workout: Workout }>;
 }
 
-const storageKey = `plan-${planData.meta.id}-changes`;
-
 export function emptyChanges(): PlanChanges {
   return {
     moved: {},
@@ -30,8 +27,8 @@ export function emptyChanges(): PlanChanges {
   };
 }
 
-export function loadChanges(): PlanChanges {
-  const saved = localStorage.getItem(storageKey);
+export function loadChanges(planId: string): PlanChanges {
+  const saved = localStorage.getItem(`plan-${planId}-changes`);
   if (!saved) return emptyChanges();
 
   try {
@@ -47,8 +44,8 @@ export function loadChanges(): PlanChanges {
   }
 }
 
-export function saveChanges(changes: PlanChanges): void {
-  localStorage.setItem(storageKey, JSON.stringify(changes));
+export function saveChanges(planId: string, changes: PlanChanges): void {
+  localStorage.setItem(`plan-${planId}-changes`, JSON.stringify(changes));
 }
 
 // Helper to generate unique IDs for new workouts

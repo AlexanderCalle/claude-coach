@@ -1,14 +1,10 @@
-import { planData } from "./plan.js";
-
 export type ViewMode = "weeks" | "calendar";
 
-const storageKey = `plan-${planData.meta.id}-viewmode`;
-
-export function loadViewMode(): ViewMode {
-  const saved = localStorage.getItem(storageKey);
+export function loadViewMode(planId: string): ViewMode {
+  const saved = localStorage.getItem(`plan-${planId}-viewmode`);
   return saved === "calendar" ? "calendar" : "weeks";
 }
 
-export function saveViewMode(mode: ViewMode): void {
-  localStorage.setItem(storageKey, mode);
+export function saveViewMode(planId: string, mode: ViewMode): void {
+  localStorage.setItem(`plan-${planId}-viewmode`, mode);
 }

@@ -1,24 +1,20 @@
-import type { TrainingPlan } from "../../schema/training-plan.js";
+import type { TrainingPlan } from "../../schema/training-plan";
 
-// Load plan from embedded JSON
-function loadPlanData(): TrainingPlan {
+// Load plan from embedded JSON. Must only be called client-side (e.g. from a
+// useEffect) - the page is statically exported, so there is no `document`
+// during the Next.js build.
+export function loadPlanData(): TrainingPlan {
   const el = document.getElementById("plan-data");
   if (!el) throw new Error("Plan data not found");
   return JSON.parse(el.textContent || "{}");
 }
 
-// Reactive state using Svelte 5's $state rune is only available in .svelte files
-// So we export the raw data and let components create reactive state
-export const planData = loadPlanData();
-
 // Completed workouts stored in localStorage
-const storageKey = `plan-${planData.meta.id}-completed`;
-
-export function loadCompleted(): Record<string, boolean> {
-  const saved = localStorage.getItem(storageKey);
+export function loadCompleted(planId: string): Record<string, boolean> {
+  const saved = localStorage.getItem(`plan-${planId}-completed`);
   return saved ? JSON.parse(saved) : {};
 }
 
-export function saveCompleted(completed: Record<string, boolean>): void {
-  localStorage.setItem(storageKey, JSON.stringify(completed));
+export function saveCompleted(planId: string, completed: Record<string, boolean>): void {
+  localStorage.setItem(`plan-${planId}-completed`, JSON.stringify(completed));
 }

@@ -1,5 +1,5 @@
-import type { Settings, HrZone } from "../stores/settings.js";
-import type { Sport, Workout } from "../../schema/training-plan.js";
+import type { Settings, HrZone } from "../stores/settings";
+import type { Sport, Workout } from "../../schema/training-plan";
 
 const METERS_PER_YARD = 0.9144;
 const KM_PER_MILE = 1.60934;

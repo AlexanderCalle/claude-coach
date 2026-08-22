@@ -7,8 +7,8 @@
  * Each workout becomes an all-day event on its scheduled date.
  */
 
-import type { TrainingPlan, Workout, TrainingDay, Sport } from "../../../schema/training-plan.js";
-import { formatDuration, getSportIcon } from "../utils.js";
+import type { TrainingPlan, Workout, TrainingDay, Sport } from "../../../schema/training-plan";
+import { formatDuration, getSportIcon } from "../utils";
 
 /**
  * Format date as iCalendar DATE value (YYYYMMDD)

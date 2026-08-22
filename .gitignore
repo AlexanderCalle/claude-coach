@@ -35,7 +35,10 @@ npm-debug.log*
 *-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].json
 *-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].html
 
-# Built template (generated from src/viewer via Vite)
+# Built template (generated from src/viewer via Next.js static export)
 templates/plan-viewer.html
+src/viewer/out/
+src/viewer/.next/
+src/viewer/tsconfig.tsbuildinfo
 cloud-output/
 cloud-output/
