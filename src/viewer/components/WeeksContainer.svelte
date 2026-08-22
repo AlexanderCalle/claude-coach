@@ -7,9 +7,17 @@
   } from "../../schema/training-plan.js";
   import type { Settings } from "../stores/settings.js";
   import type { PlanChanges } from "../stores/changes.js";
-  import { getEffectiveWorkout, isWorkoutDeleted } from "../stores/changes.js";
+  import { buildWorkoutsByDate, getOriginalDate } from "../stores/changes.js";
+  import { loadViewMode, saveViewMode, type ViewMode } from "../stores/viewMode.js";
   import WeekCard from "./WeekCard.svelte";
-  import { getOrderedDays, getTodayISO, parseDate, formatDateISO } from "../lib/utils.js";
+  import CalendarView from "./CalendarView.svelte";
+  import {
+    getOrderedDays,
+    getTodayISO,
+    parseDate,
+    formatDateISO,
+    filterWorkout,
+  } from "../lib/utils.js";
 
   interface Props {
     plan: TrainingPlan;
@@ -35,23 +43,16 @@
 
   const today = getTodayISO();
 
-  // Build a map of all original workout dates
-  function getOriginalDateMap(): Record<string, string> {
-    const map: Record<string, string> = {};
-    plan.weeks?.forEach((week) => {
-      week.days?.forEach((day) => {
-        day.workouts?.forEach((w) => {
-          map[w.id] = day.date;
-        });
-      });
-    });
-    return map;
+  let viewMode = $state<ViewMode>(loadViewMode());
+
+  function setViewMode(mode: ViewMode) {
+    viewMode = mode;
+    saveViewMode(mode);
   }
 
-  // Get effective date for a workout (original or moved)
-  function getEffectiveDate(workoutId: string, originalDate: string): string {
-    return changes.moved[workoutId] || originalDate;
-  }
+  // Every workout's effective date (respecting moves/edits/deletes/additions),
+  // shared by both the week-cards and calendar views below.
+  const workoutsByDate = $derived(buildWorkoutsByDate(plan, changes));
 
   // Build a full 7-day week with workouts in their effective positions
   function buildFullWeek(weekData: TrainingWeek): TrainingDay[] {
@@ -102,33 +103,8 @@
       return planDay ? planDay.date : getDateForDayName(dayName);
     });
 
-    // Collect workouts by their effective date (respecting moves)
-    const workoutsByDate: Record<string, Workout[]> = {};
-    allWeekDates.forEach((d) => (workoutsByDate[d] = []));
-
-    // Add original plan workouts (respecting moves)
-    plan.weeks?.forEach((week) => {
-      week.days?.forEach((day) => {
-        day.workouts?.forEach((workout) => {
-          if (isWorkoutDeleted(workout.id, changes)) return;
-
-          const effectiveDate = getEffectiveDate(workout.id, day.date);
-          if (allWeekDates.includes(effectiveDate)) {
-            const effectiveWorkout = getEffectiveWorkout(workout, changes);
-            workoutsByDate[effectiveDate].push(effectiveWorkout);
-          }
-        });
-      });
-    });
-
-    // Add user-created workouts
-    Object.entries(changes.added ?? {}).forEach(([id, { date, workout }]) => {
-      if (allWeekDates.includes(date) && !isWorkoutDeleted(id, changes)) {
-        workoutsByDate[date].push(workout);
-      }
-    });
-
-    // Build full week in the correct display order
+    // Build full week in the correct display order, pulling from the shared
+    // date -> workouts map so moves/edits stay in sync with the calendar view.
     return orderedDayNames.map((dayName, idx) => {
       const date = allWeekDates[idx];
       return {
@@ -139,86 +115,103 @@
     });
   }
 
-  function filterWorkout(workout: Workout): boolean {
-    if (filters.sport !== "all" && workout.sport !== filters.sport) {
-      return false;
-    }
-    if (filters.status === "completed" && !completed[workout.id]) {
-      return false;
-    }
-    if (filters.status === "pending" && completed[workout.id]) {
-      return false;
-    }
-    return true;
-  }
-
-  // Get the original date for a workout (needed for move tracking)
-  function getOriginalDate(workoutId: string): string {
-    // Check if it's a user-added workout
-    if (changes.added?.[workoutId]) {
-      return changes.added[workoutId].date;
-    }
-    // Find in original plan
-    for (const week of plan.weeks ?? []) {
-      for (const day of week.days ?? []) {
-        for (const workout of day.workouts ?? []) {
-          if (workout.id === workoutId) {
-            return day.date;
-          }
-        }
-      }
-    }
-    return "";
-  }
-
   function handleDrop(workoutId: string, newDate: string) {
-    const originalDate = getOriginalDate(workoutId);
+    const originalDate = getOriginalDate(plan, changes, workoutId);
     onWorkoutMove(workoutId, originalDate, newDate);
   }
 </script>
 
-<div class="phase-timeline">
-  {#each plan.phases ?? [] as phase, idx}
-    {@const weeks = phase.endWeek - phase.startWeek + 1}
-    {@const phaseName = phase.name.toLowerCase()}
+<div class="view-header">
+  <div class="phase-timeline">
+    {#each plan.phases ?? [] as phase, idx}
+      {@const weeks = phase.endWeek - phase.startWeek + 1}
+      {@const phaseName = phase.name.toLowerCase()}
+      <button
+        class="phase-segment {phaseName}"
+        style="flex: {weeks}"
+        onclick={() => {
+          setViewMode("weeks");
+          const weekCard = document.querySelector(`[data-week="${phase.startWeek}"]`);
+          weekCard?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
+      >
+        <span class="phase-label">{phase.name}</span>
+      </button>
+    {/each}
+  </div>
+
+  <div class="view-switcher" role="group" aria-label="Plan view">
     <button
-      class="phase-segment {phaseName}"
-      style="flex: {weeks}"
-      onclick={() => {
-        const weekCard = document.querySelector(`[data-week="${phase.startWeek}"]`);
-        weekCard?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }}
+      class="view-btn"
+      class:active={viewMode === "weeks"}
+      onclick={() => setViewMode("weeks")}
     >
-      <span class="phase-label">{phase.name}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="4.5" height="16" rx="1.2" />
+        <rect x="9.75" y="4" width="4.5" height="16" rx="1.2" />
+        <rect x="16.5" y="4" width="4.5" height="16" rx="1.2" />
+      </svg>
+      <span>Week Cards</span>
     </button>
-  {/each}
+    <button
+      class="view-btn"
+      class:active={viewMode === "calendar"}
+      onclick={() => setViewMode("calendar")}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M3 10h18M8 3v4M16 3v4" />
+      </svg>
+      <span>Calendar</span>
+    </button>
+  </div>
 </div>
 
-<div class="weeks-container">
-  {#each plan.weeks ?? [] as week, index (week.weekNumber)}
-    <div data-week={week.weekNumber}>
-      <WeekCard
-        {week}
-        fullWeek={buildFullWeek(week)}
-        {settings}
-        {today}
-        {completed}
-        {filterWorkout}
-        {onWorkoutClick}
-        onDrop={handleDrop}
-        {onAddWorkout}
-        animationDelay={index * 0.05}
-      />
-    </div>
-  {/each}
-</div>
+{#if viewMode === "calendar"}
+  <CalendarView
+    {plan}
+    {settings}
+    {today}
+    {completed}
+    filterWorkout={(w) => filterWorkout(w, filters, completed)}
+    {workoutsByDate}
+    {onWorkoutClick}
+    onDrop={handleDrop}
+    {onAddWorkout}
+  />
+{:else}
+  <div class="weeks-container">
+    {#each plan.weeks ?? [] as week, index (week.weekNumber)}
+      <div data-week={week.weekNumber}>
+        <WeekCard
+          {week}
+          fullWeek={buildFullWeek(week)}
+          {settings}
+          {today}
+          {completed}
+          filterWorkout={(w) => filterWorkout(w, filters, completed)}
+          {onWorkoutClick}
+          onDrop={handleDrop}
+          {onAddWorkout}
+          animationDelay={index * 0.05}
+        />
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
+  .view-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
   .phase-timeline {
     display: flex;
     gap: 4px;
-    margin-bottom: 1.5rem;
-    padding: 0 1rem;
+    flex: 1;
   }
 
   .phase-segment {
@@ -278,9 +271,64 @@
     background: linear-gradient(135deg, #10b981, #059669);
   }
 
+  .view-switcher {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 0.25rem;
+  }
+
+  .view-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+  }
+
+  .view-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .view-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .view-btn.active {
+    background: var(--accent);
+    color: var(--bg-primary);
+  }
+
   .weeks-container {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  @media (max-width: 700px) {
+    .view-header {
+      flex-wrap: wrap;
+    }
+
+    .phase-timeline {
+      order: 2;
+      flex-basis: 100%;
+    }
+
+    .view-btn span {
+      display: none;
+    }
   }
 </style>

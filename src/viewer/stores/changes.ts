@@ -1,5 +1,5 @@
 import { planData } from "./plan.js";
-import type { Workout } from "../../schema/training-plan.js";
+import type { TrainingPlan, Workout } from "../../schema/training-plan.js";
 
 /**
  * Tracks all user modifications to the plan.
@@ -75,4 +75,49 @@ export function getEffectiveWorkout(workout: Workout, changes: PlanChanges): Wor
 // Check if a workout is deleted
 export function isWorkoutDeleted(workoutId: string, changes: PlanChanges): boolean {
   return changes.deleted.includes(workoutId);
+}
+
+// Build a map of every workout's effective date (respecting moves, edits, deletes,
+// and user-added workouts), across the whole plan. Shared by any view that needs
+// to place workouts on dates - week cards, calendar, etc.
+export function buildWorkoutsByDate(
+  plan: TrainingPlan,
+  changes: PlanChanges
+): Record<string, Workout[]> {
+  const byDate: Record<string, Workout[]> = {};
+
+  plan.weeks?.forEach((week) => {
+    week.days?.forEach((day) => {
+      day.workouts?.forEach((workout) => {
+        if (isWorkoutDeleted(workout.id, changes)) return;
+        const date = getWorkoutDate(workout.id, day.date, changes);
+        (byDate[date] ??= []).push(getEffectiveWorkout(workout, changes));
+      });
+    });
+  });
+
+  Object.entries(changes.added ?? {}).forEach(([id, { date, workout }]) => {
+    if (isWorkoutDeleted(id, changes)) return;
+    (byDate[date] ??= []).push(workout);
+  });
+
+  return byDate;
+}
+
+// Find the original (pre-move) date for a workout, needed to record a new move.
+export function getOriginalDate(
+  plan: TrainingPlan,
+  changes: PlanChanges,
+  workoutId: string
+): string {
+  if (changes.added?.[workoutId]) return changes.added[workoutId].date;
+
+  for (const week of plan.weeks ?? []) {
+    for (const day of week.days ?? []) {
+      for (const workout of day.workouts ?? []) {
+        if (workout.id === workoutId) return day.date;
+      }
+    }
+  }
+  return "";
 }

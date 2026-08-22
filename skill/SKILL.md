@@ -96,7 +96,12 @@ When working from manual data, create an assessment object with the same structu
       "consistency": "weeks of consistent training"
     },
     "strengths": [{ "sport": "run", "evidence": "Athlete's self-assessment or race history" }],
-    "limiters": [{ "sport": "run", "evidence": "No structured strength training, prone to niggles late in long runs" }],
+    "limiters": [
+      {
+        "sport": "run",
+        "evidence": "No structured strength training, prone to niggles late in long runs"
+      }
+    ],
     "constraints": ["No strength training history", "Gym access 2x/week only"]
   }
 }
@@ -137,15 +142,15 @@ See `skill/reference/queries.md` for how to combine these into an assessment.
 
 Read these files as needed during plan creation:
 
-| File                                 | When to Read                | Contents                                       |
-| ------------------------------------ | ---------------------------- | ----------------------------------------------- |
-| `skill/reference/queries.md`         | First step of assessment     | COROS MCP calls for athlete analysis            |
-| `skill/reference/assessment.md`      | After running queries        | How to interpret data, validate with athlete    |
+| File                                 | When to Read                 | Contents                                         |
+| ------------------------------------ | ---------------------------- | ------------------------------------------------ |
+| `skill/reference/queries.md`         | First step of assessment     | COROS MCP calls for athlete analysis             |
+| `skill/reference/assessment.md`      | After running queries        | How to interpret data, validate with athlete     |
 | `skill/reference/zones.md`           | Before prescribing workouts  | Running zones, field testing, strength intensity |
-| `skill/reference/load-management.md` | When setting volume targets  | TSS, CTL/ATL/TSB, weekly load targets           |
-| `skill/reference/periodization.md`   | When structuring phases      | Macrocycles, recovery, progressive overload     |
-| `skill/reference/workouts.md`        | When writing weekly sessions | Running and strength workout library            |
-| `skill/reference/race-day.md`        | Final section of plan        | Pacing strategy, nutrition                      |
+| `skill/reference/load-management.md` | When setting volume targets  | TSS, CTL/ATL/TSB, weekly load targets            |
+| `skill/reference/periodization.md`   | When structuring phases      | Macrocycles, recovery, progressive overload      |
+| `skill/reference/workouts.md`        | When writing weekly sessions | Running and strength workout library             |
+| `skill/reference/race-day.md`        | Final section of plan        | Pacing strategy, nutrition                       |
 
 ---
 
@@ -210,12 +215,12 @@ The JSON must follow the TrainingPlan schema.
 
 Determine the athlete's preferred units from their COROS data and race location:
 
-| Indicator                                                  | Likely Preference |
-| ------------------------------------------------------------ | -------------------- |
-| US-based race (Chicago Marathon, Boston Marathon)           | Imperial: miles     |
-| European/Australian/most-of-the-world race                  | Metric: km           |
+| Indicator                                                      | Likely Preference |
+| -------------------------------------------------------------- | ----------------- |
+| US-based race (Chicago Marathon, Boston Marathon)              | Imperial: miles   |
+| European/Australian/most-of-the-world race                     | Metric: km        |
 | COROS activity location (from `querySportRecords`) is US-based | Imperial          |
-| COROS activity location is outside the US                    | Metric               |
+| COROS activity location is outside the US                      | Metric            |
 
 Note: `querySportRecords` reports distance in kilometers regardless of the athlete's device unit setting, so don't infer units from the raw numbers — use activity location and race country instead, and confirm with the athlete during validation.
 
@@ -265,8 +270,15 @@ Here's the structure:
       "longestSessions": { "run": 16 },
       "consistency": 4
     },
-    "strengths": [{ "sport": "run", "evidence": "Consistent long runs at low HR show solid aerobic base" }],
-    "limiters": [{ "sport": "run", "evidence": "No structured strength training; mild IT band tightness on longer runs" }],
+    "strengths": [
+      { "sport": "run", "evidence": "Consistent long runs at low HR show solid aerobic base" }
+    ],
+    "limiters": [
+      {
+        "sport": "run",
+        "evidence": "No structured strength training; mild IT band tightness on longer runs"
+      }
+    ],
     "constraints": ["Gym access 2x/week only", "History of mild IT band tightness"]
   },
   "zones": {
@@ -313,7 +325,11 @@ Here's the structure:
       "focus": "Aerobic foundation + strength foundation",
       "weeklyHoursRange": { "low": 5, "high": 6.5 },
       "keyWorkouts": ["Long run", "Foundation strength: full-body, bodyweight/light load"],
-      "physiologicalGoals": ["Improve fat oxidation", "Build aerobic base", "Groom movement patterns for heavier loading later"]
+      "physiologicalGoals": [
+        "Improve fat oxidation",
+        "Build aerobic base",
+        "Groom movement patterns for heavier loading later"
+      ]
     }
   ],
   "weeks": [
@@ -423,7 +439,11 @@ Here's the structure:
       "distances": { "run": 42.2 }
     },
     "pacing": {
-      "run": { "targetPace": "5:00-5:10/km", "targetHR": "<160", "notes": "Even splits, resist the downhill-start temptation" }
+      "run": {
+        "targetPace": "5:00-5:10/km",
+        "targetHR": "<160",
+        "notes": "Even splits, resist the downhill-start temptation"
+      }
     },
     "nutrition": {
       "preRace": "3 hours before: 100-150g carbs, low fiber (oatmeal, toast, banana)",
@@ -443,7 +463,11 @@ Here's the structure:
       "wakeUpTime": "4:30 AM for a 7:30 AM start",
       "preRaceMeal": "Familiar breakfast eaten 3hr out; nothing new on race day",
       "warmUp": "10-15min easy jog + dynamic drills, finish 20-30min before gun",
-      "mentalCues": ["Relax the shoulders", "Run the mile you're in", "Save the surge for the last 5K"]
+      "mentalCues": [
+        "Relax the shoulders",
+        "Run the mile you're in",
+        "Save the surge for the last 5K"
+      ]
     }
   }
 }
@@ -461,19 +485,37 @@ npx claude-coach render plan.json --output plan.html
 
 This creates a beautiful, interactive training plan with:
 
-- Calendar view with color-coded workouts by sport
+- A view switcher toggling between **Calendar** (a month grid, workouts placed on the day they fall) and **Week Cards** (one card per training week, 7-day columns) — pick whichever reads better by default; the athlete can switch anytime
+- Color-coded workouts by sport in both views
 - Click workouts to see full details
 - Mark workouts as complete (saved to localStorage)
 - Week summaries with hours by sport
 - Dark mode, mobile responsive
 
-### Step 3: Tell the User
+### Step 3: Publish as a Claude Artifact (when available)
 
-After both files are created, tell the user:
+**Always publish the plan as a Claude Artifact when the Artifact tool is available in this session.** This is the primary, preferred way athletes view and share their plan — no downloaded file to open, and it renders inline right away.
+
+1. Render an Artifact-safe fragment alongside the regular HTML file — pass `--fragment` to strip the outer `<!doctype>`/`<html>`/`<head>`/`<body>` wrapper tags (a Claude Artifact supplies its own document shell and rejects a nested one; everything that was inside those tags — fonts, styles, the app itself — is kept as-is):
+
+   ```bash
+   npx claude-coach render plan.json --output plan-artifact.html --fragment
+   ```
+
+2. Publish `plan-artifact.html` with the Artifact tool:
+   - `title`: the event name (e.g. "Chicago Marathon Plan")
+   - `description`: one sentence, e.g. "12-week marathon training plan with strength work"
+   - `favicon`: a running-appropriate emoji, e.g. 🏃
+
+If the Artifact tool isn't available in this session (e.g. a non-Claude environment), skip this step — the regular `plan.html` from Step 2 is the deliverable, and the athlete opens it directly in a browser.
+
+### Step 4: Tell the User
+
+After the files are created, tell the user:
 
 1. The JSON file path (for data)
-2. The HTML file path (for viewing)
-3. Suggest opening the HTML file in a browser
+2. If published, that the plan is viewable as an Artifact right in the conversation, and that it's shareable
+3. The local HTML file path (`plan.html`) as a backup / for offline viewing — mention this is also where the export features (calendar sync, Zwift/Garmin/TrainerRoad files) live, since exports and downloads don't work inside an Artifact
 
 ---
 
@@ -499,6 +541,7 @@ After both files are created, tell the user:
 - **Distinguish foundation from form** - A marathon finisher who took 3 months off is NOT the same as a beginner
 - **Zones must be established** before prescribing specific workouts
 - **Output JSON, then render HTML** - Write the plan as `.json`, then use `npx claude-coach render` to create the HTML viewer
+- **Publish as a Claude Artifact whenever the Artifact tool is available** - Render with `--fragment` and publish it; don't leave the athlete with only a local file to open when an inline, shareable view is available
 - **Explain the "why"** - Athletes trust and follow plans they understand
 - **Be conservative with manual data** - When working without COROS data, err on the side of caution with volume and intensity
 - **Recommend field tests** - For manual data athletes, include zone validation workouts in the first 1-2 weeks
