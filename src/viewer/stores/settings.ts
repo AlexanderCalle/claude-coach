@@ -1,4 +1,4 @@
-import { planData } from "./plan.js";
+import type { TrainingPlan } from "../../schema/training-plan";
 
 export interface HrZone {
   zone: number;
@@ -103,21 +103,20 @@ const defaultSettings: Settings = {
   },
 };
 
-const storageKey = `plan-${planData.meta.id}-settings`;
-
-export function loadSettings(): Settings {
+export function loadSettings(plan: TrainingPlan): Settings {
+  const storageKey = `plan-${plan.meta.id}-settings`;
   const settings = JSON.parse(JSON.stringify(defaultSettings));
 
   // Merge with plan preferences
-  if (planData.preferences) {
-    settings.units.swim = planData.preferences.swim || settings.units.swim;
-    settings.units.bike = planData.preferences.bike || settings.units.bike;
-    settings.units.run = planData.preferences.run || settings.units.run;
-    settings.firstDayOfWeek = planData.preferences.firstDayOfWeek || settings.firstDayOfWeek;
+  if (plan.preferences) {
+    settings.units.swim = plan.preferences.swim || settings.units.swim;
+    settings.units.bike = plan.preferences.bike || settings.units.bike;
+    settings.units.run = plan.preferences.run || settings.units.run;
+    settings.firstDayOfWeek = plan.preferences.firstDayOfWeek || settings.firstDayOfWeek;
   }
 
   // Merge with plan zones
-  const zones = planData.zones;
+  const zones = plan.zones;
   if (zones?.run?.hr) {
     settings.run.lthr = zones.run.hr.lthr;
     if (zones.run.hr.zones) {
@@ -189,8 +188,8 @@ export function loadSettings(): Settings {
   return settings;
 }
 
-export function saveSettings(settings: Settings): void {
-  localStorage.setItem(storageKey, JSON.stringify(settings));
+export function saveSettings(planId: string, settings: Settings): void {
+  localStorage.setItem(`plan-${planId}-settings`, JSON.stringify(settings));
 }
 
 // Utility functions

@@ -1,3 +1,7 @@
 dist/
 node_modules/
 *.db
+templates/
+src/viewer/out/
+src/viewer/.next/
+docs/demos/

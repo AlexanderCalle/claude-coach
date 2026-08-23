@@ -15,8 +15,8 @@ import type {
   StructuredWorkout,
   WorkoutStep,
   IntervalSet,
-} from "../../../schema/training-plan.js";
-import type { Settings } from "../../stores/settings.js";
+} from "../../../schema/training-plan";
+import type { Settings } from "../../stores/settings";
 import { Encoder, Profile } from "@garmin/fitsdk";
 
 /**

@@ -1,5 +1,5 @@
-import type { Settings, HrZone } from "../stores/settings.js";
-import type { Sport } from "../../schema/training-plan.js";
+import type { Settings, HrZone } from "../stores/settings";
+import type { Sport, Workout } from "../../schema/training-plan";
 
 const METERS_PER_YARD = 0.9144;
 const KM_PER_MILE = 1.60934;
@@ -131,6 +131,23 @@ export function getSportColor(sport: Sport): string {
     rest: "var(--rest)",
   };
   return colors[sport] || "var(--text-muted)";
+}
+
+export function filterWorkout(
+  workout: Workout,
+  filters: { sport: string; status: string },
+  completed: Record<string, boolean>
+): boolean {
+  if (filters.sport !== "all" && workout.sport !== filters.sport) {
+    return false;
+  }
+  if (filters.status === "completed" && !completed[workout.id]) {
+    return false;
+  }
+  if (filters.status === "pending" && completed[workout.id]) {
+    return false;
+  }
+  return true;
 }
 
 export function getSportIcon(sport: Sport): string {

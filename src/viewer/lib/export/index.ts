@@ -9,12 +9,12 @@
  * - ICS (iCalendar) - full plan calendar events
  */
 
-import type { Workout, TrainingPlan, TrainingDay, Sport } from "../../../schema/training-plan.js";
-import type { Settings } from "../../stores/settings.js";
-import { generateZwo, isZwoSupported } from "./zwo.js";
-import { generateFit, isFitSupported } from "./fit.js";
-import { generateMrc, isErgSupported } from "./erg.js";
-import { generateIcs } from "./ics.js";
+import type { Workout, TrainingPlan, TrainingDay, Sport } from "../../../schema/training-plan";
+import type { Settings } from "../../stores/settings";
+import { generateZwo, isZwoSupported } from "./zwo";
+import { generateFit, isFitSupported } from "./fit";
+import { generateMrc, isErgSupported } from "./erg";
+import { generateIcs } from "./ics";
 import JSZip from "jszip";
 
 export type ExportFormat = "zwo" | "fit" | "mrc" | "ics";
@@ -270,6 +270,6 @@ export async function exportAllWorkouts(
 }
 
 // Re-export format-specific helpers
-export { isZwoSupported } from "./zwo.js";
-export { isFitSupported, isFitSdkAvailable } from "./fit.js";
-export { isErgSupported } from "./erg.js";
+export { isZwoSupported } from "./zwo";
+export { isFitSupported, isFitSdkAvailable } from "./fit";
+export { isErgSupported } from "./erg";

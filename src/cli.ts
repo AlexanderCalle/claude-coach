@@ -53,6 +53,7 @@ interface RenderArgs {
   command: "render";
   inputFile: string;
   outputFile?: string;
+  fragment: boolean;
 }
 
 interface QueryArgs {
@@ -107,6 +108,7 @@ function parseArgs(): CliArgs {
     const renderArgs: RenderArgs = {
       command: "render",
       inputFile: args[1],
+      fragment: args.includes("--fragment"),
     };
 
     for (let i = 2; i < args.length; i++) {
@@ -190,6 +192,9 @@ Sync Options:
 
 Render Options:
   --output, -o FILE     Output HTML file (default: <input>.html)
+  --fragment            Strip the <!doctype>/<html>/<head>/<body> wrapper so the
+                         output can be published as a Claude Artifact (which
+                         supplies its own document shell)
 
 Query Options:
   --json                Output as JSON (default: plain text)
@@ -206,6 +211,9 @@ Examples:
 
   # Render a training plan to HTML
   npx claude-coach render plan.json --output my-plan.html
+
+  # Render a fragment suitable for publishing as a Claude Artifact
+  npx claude-coach render plan.json --output plan-artifact.html --fragment
 
   # Query the database
   npx claude-coach query "SELECT * FROM weekly_volume LIMIT 5"
@@ -534,6 +542,22 @@ function getTemplatePath(): string {
   throw new Error("Could not find plan-viewer.html template");
 }
 
+// Strip the outer document shell (<!doctype>, <html>, <head>/<body> tags) so the
+// markup can be dropped into a host page that supplies its own - e.g. a Claude
+// Artifact, which wraps published content in its own <html>/<head>/<body> skeleton
+// and rejects a nested one. Everything inside <head> and <body> is kept as-is.
+function toArtifactFragment(html: string): string {
+  return html
+    .replace(/<!doctype\s+html\s*>/i, "")
+    .replace(/<html[^>]*>/i, "")
+    .replace(/<\/html>/i, "")
+    .replace(/<head[^>]*>/i, "")
+    .replace(/<\/head>/i, "")
+    .replace(/<body[^>]*>/i, "")
+    .replace(/<\/body>/i, "")
+    .trim();
+}
+
 function runRender(args: RenderArgs): void {
   log.start("Rendering training plan...");
 
@@ -562,6 +586,10 @@ function runRender(args: RenderArgs): void {
   const planDataRegex = /<script type="application\/json" id="plan-data">[\s\S]*?<\/script>/;
   const newPlanData = `<script type="application/json" id="plan-data">\n${planJson}\n</script>`;
   template = template.replace(planDataRegex, newPlanData);
+
+  if (args.fragment) {
+    template = toArtifactFragment(template);
+  }
 
   // Output
   if (args.outputFile) {
