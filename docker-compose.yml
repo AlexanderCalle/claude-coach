@@ -1,0 +1,26 @@
+# Deploy target for Dokploy (or `docker compose up -d` anywhere). Point a
+# Dokploy "Compose" application at this repo/file; it builds the Dockerfile,
+# runs the plan server, and keeps the plan data on a named volume so it
+# survives redeploys.
+services:
+  plan-server:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      DATA_DIR: /app/data
+      # Set in Dokploy's environment variables UI - do not commit a real
+      # value here. Generate one with: openssl rand -hex 32
+      PLAN_TOKEN: ${PLAN_TOKEN:?PLAN_TOKEN must be set}
+    volumes:
+      - plan-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  plan-data:

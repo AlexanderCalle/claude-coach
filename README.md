@@ -103,6 +103,54 @@ Once you're training against the plan, come back every week or two with the JSON
 
 > Help me check in on my training plan (attached) - it's been two weeks since I last looked at it.
 
+## Self-Hosting Your Plan (Optional)
+
+By default the plan lives as a downloaded HTML file and/or a Claude Artifact — both fine, but both need a human to open the skill and re-publish before they reflect reality. If you'd rather have your plan live at a stable URL that a **scheduled, unattended check-in keeps up to date on its own**, run the plan server included in this repo (`src/server/plan-server.ts`) somewhere long-running — Dokploy, or any other Docker host.
+
+### 1. Deploy the plan server
+
+The repo root has a `Dockerfile` and `docker-compose.yml` set up for this.
+
+**On Dokploy:**
+
+1. Create a new application from this repository (Docker Compose type, using the root `docker-compose.yml`, or Dockerfile type pointing at the root `Dockerfile`).
+2. Set the environment variable `PLAN_TOKEN` to a long random secret — e.g. `openssl rand -hex 32`. This one token gates both viewing the plan and publishing updates to it; don't skip it, since the deployed page is reachable at whatever domain Dokploy gives it.
+3. Mount a persistent volume at `/app/data` (the compose file already declares one) — this is where the current plan and check-in history live; without it, a redeploy wipes the plan.
+4. Deploy, and attach a domain in Dokploy the usual way.
+5. Visit `https://your-domain/?token=<PLAN_TOKEN>` — you should see an empty-state plan page ("No plan published yet").
+
+**Locally, for testing:** `cp .env.example .env`, fill in `PLAN_TOKEN`, then `npm run dev:server`.
+
+### 2. Point the skills at it
+
+Set two environment variables wherever `coach` / `coach-checkin` run (a Claude Code project's environment, a Cowork environment, or your own shell):
+
+```
+RUNNIFY_SERVER_URL=https://your-domain
+RUNNIFY_SERVER_TOKEN=<the same PLAN_TOKEN>
+```
+
+With those set, both skills automatically publish to the server in addition to (not instead of) the Artifact/local-file output — see `npx runnify-assistant publish --help`. The next time you run `coach`, tell Claude your plan should also go to the hosted server; it'll pick up the env vars on its own.
+
+### 3. Automate daily/weekly check-ins with a Cowork Routine
+
+This is the piece that makes the page update itself: a scheduled Routine that fires `coach-checkin` in "headless" mode (see the "Running as a Scheduled Check-In" section in `skill-checkin/SKILL.md`) — it pulls yesterday's activities (Strava/COROS), compares them against the hosted plan, applies only the small, obviously-correct adjustments on its own, and pushes the result back to the server. Anything bigger (a race-goal change, a multi-week rebuild) gets left as a note for you to review, never applied unattended.
+
+To set this up in Claude Code on the web / Cowork:
+
+1. Make sure the environment the Routine fires into has `RUNNIFY_SERVER_URL`/`RUNNIFY_SERVER_TOKEN` set, and either a Strava refresh token or a connected COROS MCP — the check-in needs to pull activity data without you present.
+2. Create a daily (or weekly) scheduled trigger whose prompt asks Claude to run a headless `coach-checkin` against the hosted plan and publish the result. Ask Claude to set this up for you and it can create the trigger directly.
+3. Check the server occasionally (`GET /api/plan` returns the current plan plus a rolling history of check-in summaries) to see what's been happening without you.
+
+### API reference
+
+| Route            | Auth                                                    | Purpose                                                                    |
+| ---------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `GET /`          | `?token=` query, `Authorization: Bearer`, or HTTP Basic | The plan viewer page, rendered with whatever was last published            |
+| `GET /api/plan`  | same as above                                           | `{ plan, history }` — current plan JSON and the last 20 check-in summaries |
+| `POST /api/plan` | `Authorization: Bearer`                                 | Publish a new plan: `{ plan, summary?, source? }`                          |
+| `GET /health`    | none                                                    | Liveness check for Dokploy/Docker                                          |
+
 # About
 
 Runnify Assistant is an independent, open-source project and is not made by, endorsed by, or affiliated with Anthropic, PBC. "Claude" is a trademark of Anthropic. This tool is a skill/plugin that works with Claude products but is developed and maintained independently. License: MIT.

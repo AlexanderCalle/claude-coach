@@ -1,0 +1,15 @@
+node_modules
+dist
+templates
+.git
+.github
+.husky
+docs
+examples
+tests
+skill
+skill-checkin
+data
+*.log
+.env
+.env.*
