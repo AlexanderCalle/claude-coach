@@ -517,6 +517,18 @@ This creates a beautiful, interactive training plan with:
 
 If the Artifact tool isn't available in this session (e.g. a non-Claude environment), skip this step — the regular `plan.html` from Step 2 is the deliverable, and the athlete opens it directly in a browser.
 
+### Step 3b: Publish to a hosted plan server (when configured)
+
+Some athletes run their own hosted plan server (see `docs` in the repo, or ask if unsure) — a small self-hosted app that keeps the plan live at a stable URL and lets scheduled check-ins update it without a human in the loop. It's configured via two environment variables: `RUNNIFY_SERVER_URL` and `RUNNIFY_SERVER_TOKEN`.
+
+If both are set in this session's environment, publish there too:
+
+```bash
+npx runnify-assistant publish plan.json --source="coach" --summary="Initial plan created"
+```
+
+This is additive, not a replacement — still do Step 2 (local HTML) and Step 3 (Artifact) regardless. If the env vars aren't set, skip this step silently; don't ask the athlete to set up a server they haven't mentioned wanting.
+
 ### Step 4: Tell the User
 
 After the files are created, tell the user:
@@ -524,7 +536,8 @@ After the files are created, tell the user:
 1. The JSON file path (for data)
 2. If published, that the plan is viewable as an Artifact right in the conversation, and that it's shareable
 3. The local HTML file path (`plan.html`) as a backup / for offline viewing — mention this is also where the export features (calendar sync, Zwift/Garmin/TrainerRoad files) live, since exports and downloads don't work inside an Artifact
-4. That they can come back anytime to check in — report how training's actually going, get feedback, and have the upcoming weeks adjusted if needed — by asking to use the **`coach-checkin`** skill with this JSON file
+4. If published to a hosted plan server (Step 3b), the server URL — that's now the durable link, and it's what future scheduled check-ins will keep up to date
+5. That they can come back anytime to check in — report how training's actually going, get feedback, and have the upcoming weeks adjusted if needed — by asking to use the **`coach-checkin`** skill with this JSON file
 
 ---
 
@@ -551,6 +564,7 @@ After the files are created, tell the user:
 - **Zones must be established** before prescribing specific workouts
 - **Output JSON, then render HTML** - Write the plan as `.json`, then use `npx runnify-assistant render` to create the HTML viewer
 - **Publish as a Claude Artifact whenever the Artifact tool is available** - Render with `--fragment` and publish it; don't leave the athlete with only a local file to open when an inline, shareable view is available
+- **Publish to the hosted plan server too, if `RUNNIFY_SERVER_URL`/`RUNNIFY_SERVER_TOKEN` are set** - `npx runnify-assistant publish plan.json`; this is what a scheduled daily check-in will keep updating, so it needs the initial plan on it from the start
 - **Explain the "why"** - Athletes trust and follow plans they understand
 - **Be conservative with manual data** - When working without COROS data, err on the side of caution with volume and intensity
 - **Recommend field tests** - For manual data athletes, include zone validation workouts in the first 1-2 weeks

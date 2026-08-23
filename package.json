@@ -24,6 +24,8 @@
     "build:website": "node scripts/build-website.js",
     "dev": "tsx watch src/cli.ts",
     "dev:viewer": "next dev src/viewer",
+    "dev:server": "tsx watch src/server/plan-server.ts",
+    "start:server": "node dist/server/plan-server.js",
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit && tsc --noEmit -p src/viewer",

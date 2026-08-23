@@ -19,9 +19,25 @@ This skill is interactive by nature: it runs as a conversation, not a form. Ask 
 
 ---
 
+## Running as a Scheduled Check-In (No Athlete Present)
+
+Everything above describes this skill run interactively, with an athlete to talk to. It can also run **headlessly** — fired by a daily/weekly Routine against a hosted plan server, with nobody reading the output in real time. Recognize this mode when there's no human turn to react to (the prompt itself says so, or you're clearly running on a schedule rather than in a chat).
+
+In that mode, adjust the steps below:
+
+- **Step 1**: no JSON file to ask for — fetch the current plan from `RUNNIFY_SERVER_URL`/`RUNNIFY_SERVER_TOKEN` instead: `GET $RUNNIFY_SERVER_URL/api/plan` with an `Authorization: Bearer $RUNNIFY_SERVER_TOKEN` header (or `npx runnify-assistant query`-style tooling if you have it; a plain authenticated fetch works fine here).
+- **Step 2**: skip the "ask the athlete directly" branch entirely — there's no one to ask. Use whatever automatic source is available (COROS, Strava). If a workout can't be matched to any activity and the gap can't be explained from data alone, don't guess why — just record it as unconfirmed (see Step 3) rather than inventing a reason.
+- **Step 5**: only apply changes that Step 5's rules already allow _without_ athlete confirmation (the small, evidence-backed, obviously-correct ones). Anything that would normally need the athlete's explicit go-ahead — race goal, phase structure, multi-week volume changes — do **not** apply it; instead, note the recommendation in the check-in summary (Step 6b) for the athlete to review and confirm themselves next time they're present. A scheduled run should never make an irreversible call alone.
+- **Step 6**: after re-rendering, always publish to the hosted server (Step 6b) — there's no other way anyone sees this check-in happened.
+- **Step 7**: there's no athlete to close the loop with in the moment. Fold what you'd have told them into the `--summary` you publish with in Step 6b, written for their next login — plain language, not a diff of what changed in the JSON.
+
+If any of this is ambiguous — e.g. the server has no plan yet, or credentials are missing — stop and don't invent one; that's a setup problem for a human to fix, not something to paper over.
+
+---
+
 ## Step 1: Find the Plan
 
-Ask for (or locate) the training plan JSON file — the one `coach` produced (`{event-name}-{date}.json`). If the athlete only has the rendered HTML or Artifact, ask them to share the JSON, since that's the file this skill edits; the HTML/Artifact is always regenerated from it in Step 6.
+Ask for (or locate) the training plan JSON file — the one `coach` produced (`{event-name}-{date}.json`). If the athlete only has the rendered HTML or Artifact, ask them to share the JSON, since that's the file this skill edits; the HTML/Artifact is always regenerated from it in Step 6. (Running headlessly? See "Running as a Scheduled Check-In" above — fetch from the hosted server instead.)
 
 Read the file and orient yourself:
 
@@ -111,6 +127,16 @@ Once the athlete has confirmed (or for the case above, in the same turn):
    npx runnify-assistant render plan.json --output plan-artifact.html --fragment
    ```
 
+### Step 6b: Publish to the hosted plan server (when configured)
+
+If `RUNNIFY_SERVER_URL`/`RUNNIFY_SERVER_TOKEN` are set, push the update there too — this is what keeps the live page current, and it's the only record of a headless/scheduled check-in (see "Running as a Scheduled Check-In" above):
+
+```bash
+npx runnify-assistant publish plan.json --source="coach-checkin" --summary="<one line: what you found and what, if anything, changed>"
+```
+
+Write the `--summary` for the athlete, not for a changelog — e.g. `"Week 6 done as planned, 5/5 sessions. No changes."` or `"Sick 4 days — extended the recovery week, pushed build phase back a week."` It's what they'll read first when they next open the plan.
+
 Never regenerate the whole plan from scratch for a check-in — surgical edits to the affected weeks only. A full rebuild throws away the completed-workout history that makes future check-ins meaningful.
 
 ---
@@ -121,8 +147,10 @@ Close with:
 
 1. The feedback from Step 4, if you haven't already led with it
 2. What changed in the plan, if anything, and why (in coaching terms, not just "I edited week 7")
-3. Where to find the updated plan (Artifact link and/or local HTML path)
+3. Where to find the updated plan (Artifact link, hosted server URL, and/or local HTML path)
 4. A concrete next check-in point — "let's check back in after the long run in two weeks" beats leaving it open-ended; a plan that's never revisited drifts from reality the same way one that's revisited too often gets overmanaged
+
+(Running headlessly, with no athlete to tell? This is what Step 6b's `--summary` is for instead — see "Running as a Scheduled Check-In" above.)
 
 ---
 
@@ -134,3 +162,4 @@ Close with:
 4. **Preserve history** — completed workouts and their notes are the record of what actually happened; never overwrite them
 5. **Always propose before you rewrite anything non-trivial** — the athlete owns the plan; you're advising, not overriding
 6. **One check-in doesn't need to resolve everything** — if the picture is unclear (e.g., an injury that needs more information), say what you'd want to know next rather than guessing
+7. **Running headlessly is a reason for more caution, not less** — apply only the changes that don't need athlete confirmation to begin with; surface everything bigger as a recommendation for their next login instead of deciding on their behalf

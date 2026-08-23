@@ -16,11 +16,8 @@ import { getValidTokens } from "./strava/oauth.js";
 import { getAllActivities, getAthlete } from "./strava/api.js";
 import type { StravaActivity, StravaTokenResponse } from "./strava/types.js";
 import { readFileSync, writeFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
 import { ProxyAgent, setGlobalDispatcher } from "undici";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { renderPlanHtml } from "./lib/render-plan.js";
 
 // ============================================================================
 // Proxy Configuration
@@ -56,6 +53,15 @@ interface RenderArgs {
   fragment: boolean;
 }
 
+interface PublishArgs {
+  command: "publish";
+  inputFile: string;
+  server?: string;
+  token?: string;
+  summary?: string;
+  source?: string;
+}
+
 interface QueryArgs {
   command: "query";
   sql: string;
@@ -73,7 +79,7 @@ interface HelpArgs {
   command: "help";
 }
 
-type CliArgs = SyncArgs | RenderArgs | QueryArgs | AuthArgs | HelpArgs;
+type CliArgs = SyncArgs | RenderArgs | PublishArgs | QueryArgs | AuthArgs | HelpArgs;
 
 function parseArgs(): CliArgs {
   const args = process.argv.slice(2);
@@ -121,6 +127,32 @@ function parseArgs(): CliArgs {
     }
 
     return renderArgs;
+  }
+
+  if (args[0] === "publish") {
+    if (!args[1]) {
+      log.error("publish command requires an input file");
+      process.exit(1);
+    }
+
+    const publishArgs: PublishArgs = {
+      command: "publish",
+      inputFile: args[1],
+    };
+
+    for (let i = 2; i < args.length; i++) {
+      if (args[i].startsWith("--server=")) {
+        publishArgs.server = args[i].split("=")[1];
+      } else if (args[i].startsWith("--token=")) {
+        publishArgs.token = args[i].slice("--token=".length);
+      } else if (args[i].startsWith("--summary=")) {
+        publishArgs.summary = args[i].slice("--summary=".length);
+      } else if (args[i].startsWith("--source=")) {
+        publishArgs.source = args[i].slice("--source=".length);
+      }
+    }
+
+    return publishArgs;
   }
 
   if (args[0] === "query") {
@@ -172,6 +204,7 @@ Commands:
   sync              Sync activities from Strava
   auth              Get Strava authorization URL or exchange code for tokens
   render <file>     Render a training plan JSON to HTML
+  publish <file>    Push a training plan to your hosted plan server
   query <sql>       Run a SQL query against the database
   help              Show this help message
 
@@ -196,6 +229,12 @@ Render Options:
                          output can be published as a Claude Artifact (which
                          supplies its own document shell)
 
+Publish Options (push a plan to your self-hosted plan server):
+  --server=URL           Server base URL (default: $RUNNIFY_SERVER_URL)
+  --token=TOKEN          Auth token (default: $RUNNIFY_SERVER_TOKEN)
+  --summary=TEXT         One-line note about this update (e.g. check-in feedback)
+  --source=TEXT          Who/what triggered this publish (e.g. "coach-checkin", "daily-routine")
+
 Query Options:
   --json                Output as JSON (default: plain text)
 
@@ -214,6 +253,9 @@ Examples:
 
   # Render a fragment suitable for publishing as a Claude Artifact
   npx runnify-assistant render plan.json --output plan-artifact.html --fragment
+
+  # Publish the plan to your hosted plan server (live at $RUNNIFY_SERVER_URL)
+  npx runnify-assistant publish plan.json --summary="Week 6 check-in: on track"
 
   # Query the database
   npx runnify-assistant query "SELECT * FROM weekly_volume LIMIT 5"
@@ -522,42 +564,6 @@ async function runSync(args: SyncArgs): Promise<void> {
 // Render Command
 // ============================================================================
 
-function getTemplatePath(): string {
-  // Look for template in multiple locations
-  const locations = [
-    join(__dirname, "..", "templates", "plan-viewer.html"),
-    join(__dirname, "..", "..", "templates", "plan-viewer.html"),
-    join(process.cwd(), "templates", "plan-viewer.html"),
-  ];
-
-  for (const loc of locations) {
-    try {
-      readFileSync(loc);
-      return loc;
-    } catch {
-      // Continue to next location
-    }
-  }
-
-  throw new Error("Could not find plan-viewer.html template");
-}
-
-// Strip the outer document shell (<!doctype>, <html>, <head>/<body> tags) so the
-// markup can be dropped into a host page that supplies its own - e.g. a Claude
-// Artifact, which wraps published content in its own <html>/<head>/<body> skeleton
-// and rejects a nested one. Everything inside <head> and <body> is kept as-is.
-function toArtifactFragment(html: string): string {
-  return html
-    .replace(/<!doctype\s+html\s*>/i, "")
-    .replace(/<html[^>]*>/i, "")
-    .replace(/<\/html>/i, "")
-    .replace(/<head[^>]*>/i, "")
-    .replace(/<\/head>/i, "")
-    .replace(/<body[^>]*>/i, "")
-    .replace(/<\/body>/i, "")
-    .trim();
-}
-
 function runRender(args: RenderArgs): void {
   log.start("Rendering training plan...");
 
@@ -578,27 +584,70 @@ function runRender(args: RenderArgs): void {
     process.exit(1);
   }
 
-  // Read the template
-  const templatePath = getTemplatePath();
-  let template = readFileSync(templatePath, "utf-8");
-
-  // Replace the plan data in the template
-  const planDataRegex = /<script type="application\/json" id="plan-data">[\s\S]*?<\/script>/;
-  const newPlanData = `<script type="application/json" id="plan-data">\n${planJson}\n</script>`;
-  template = template.replace(planDataRegex, newPlanData);
-
-  if (args.fragment) {
-    template = toArtifactFragment(template);
-  }
+  const rendered = renderPlanHtml(planJson, { fragment: args.fragment });
 
   // Output
   if (args.outputFile) {
-    writeFileSync(args.outputFile, template);
+    writeFileSync(args.outputFile, rendered);
     log.success(`Training plan rendered to: ${args.outputFile}`);
   } else {
     // Output to stdout
-    console.log(template);
+    console.log(rendered);
   }
+}
+
+// ============================================================================
+// Publish Command
+// ============================================================================
+
+async function runPublish(args: PublishArgs): Promise<void> {
+  const serverUrl = args.server || process.env.RUNNIFY_SERVER_URL;
+  const token = args.token || process.env.RUNNIFY_SERVER_TOKEN;
+
+  if (!serverUrl) {
+    log.error("No server URL. Pass --server=https://your-domain, or set RUNNIFY_SERVER_URL.");
+    process.exit(1);
+  }
+  if (!token) {
+    log.error("No auth token. Pass --token=..., or set RUNNIFY_SERVER_TOKEN.");
+    process.exit(1);
+  }
+
+  let planJson: string;
+  try {
+    planJson = readFileSync(args.inputFile, "utf-8");
+  } catch {
+    log.error(`Could not read input file: ${args.inputFile}`);
+    process.exit(1);
+  }
+
+  let plan: unknown;
+  try {
+    plan = JSON.parse(planJson);
+  } catch {
+    log.error("Input file is not valid JSON");
+    process.exit(1);
+  }
+
+  const endpoint = new URL("/api/plan", serverUrl).toString();
+  log.start(`Publishing plan to ${endpoint}...`);
+
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ plan, summary: args.summary, source: args.source }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    log.error(`Publish failed: ${res.status} ${res.statusText} ${body}`);
+    process.exit(1);
+  }
+
+  log.success(`Published. Live at: ${serverUrl}`);
 }
 
 // ============================================================================
@@ -636,6 +685,9 @@ async function main() {
       break;
     case "render":
       runRender(args);
+      break;
+    case "publish":
+      await runPublish(args);
       break;
     case "query":
       await runQuery(args);

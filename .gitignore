@@ -10,9 +10,13 @@ coverage/
 # Environment and secrets
 .env
 .env.*
+!.env.example
 
 # SQLite databases
 *.db
+
+# Local plan server data (see src/server/store.ts)
+/data/
 
 # Editor
 .vscode/
