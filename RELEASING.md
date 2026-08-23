@@ -32,8 +32,9 @@ The About tab automatically reads the version from package.json at build time.
 # Build the viewer (creates templates/plan-viewer.html)
 npm run build:viewer
 
-# Build the skill zip (creates dist/coach-skill.zip)
+# Build the skill zips (creates dist/coach-skill.zip and dist/coach-checkin-skill.zip)
 npm run build:skill
+npm run build:skill-checkin
 ```
 
 ### 3. Publish to npm
@@ -58,11 +59,12 @@ Create a new release on GitHub with the skill zip attached:
 # Get the version from package.json
 VERSION=$(node -p "require('./package.json').version")
 
-# Create the release with the skill zip
+# Create the release with both skill zips
 gh release create "v$VERSION" \
   --title "v$VERSION" \
   --notes "See [CHANGELOG.md](CHANGELOG.md) for details." \
-  dist/coach-skill.zip
+  dist/coach-skill.zip \
+  dist/coach-checkin-skill.zip
 ```
 
 Or manually:
@@ -71,7 +73,7 @@ Or manually:
 2. Choose the tag you just pushed (e.g., `v0.1.0`)
 3. Set the release title (e.g., `v0.1.0`)
 4. Add release notes
-5. Attach `dist/coach-skill.zip` as a binary
+5. Attach `dist/coach-skill.zip` and `dist/coach-checkin-skill.zip` as binaries
 6. Click "Publish release"
 
 ## Quick Release Script
@@ -81,22 +83,24 @@ For convenience, here's a one-liner (after updating version):
 ```bash
 npm run build:viewer && \
 npm run build:skill && \
+npm run build:skill-checkin && \
 npm publish && \
 git push origin main --tags && \
 VERSION=$(node -p "require('./package.json').version") && \
-gh release create "v$VERSION" --title "v$VERSION" --generate-notes dist/coach-skill.zip
+gh release create "v$VERSION" --title "v$VERSION" --generate-notes dist/coach-skill.zip dist/coach-checkin-skill.zip
 ```
 
 ## What Gets Released
 
-| Artifact    | Destination                    | Contents                         |
-| ----------- | ------------------------------ | -------------------------------- |
-| npm package | npmjs.com/package/claude-coach | CLI tool, viewer builder         |
-| Skill zip   | GitHub Releases                | `skill/` directory for Claude.ai |
+| Artifact           | Destination                    | Contents                                                              |
+| ------------------ | ------------------------------ | --------------------------------------------------------------------- |
+| npm package        | npmjs.com/package/claude-coach | CLI tool, viewer builder                                              |
+| Skill zip          | GitHub Releases                | `skill/` directory for Claude.ai — creates plans                      |
+| Check-in skill zip | GitHub Releases                | `skill-checkin/` directory for Claude.ai — feedback + plan adaptation |
 
 ## Verification
 
 After releasing:
 
 1. **npm**: Run `npx claude-coach --help` to verify the CLI works
-2. **Skill**: Download the zip from GitHub releases, install in Claude.ai, and test
+2. **Skill**: Download both zips from GitHub releases, install in Claude.ai, and test — create a plan with `coach-skill.zip`, then check in on it with `coach-checkin-skill.zip`

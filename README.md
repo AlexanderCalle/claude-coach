@@ -16,20 +16,27 @@ I happen to work at Anthropic, so this tool is optimized for Claude. To use this
 
 Syncing all your Strava activities and creating a tailored training plan takes ca. 15 minutes.
 
-### Installing the Skill
+### Installing the Skills
 
-First, [download the latest skill from GitHub Releases](https://github.com/felixrieseberg/claude-coach/releases/latest/download/coach-skill.zip).
+Claude Coach is two skills: **`coach`** creates the initial plan, and **`coach-checkin`** is what you come back to later for feedback and to adjust the plan as training actually happens. Install both — a plan you can never revisit stops matching reality within a couple of weeks.
+
+Download the latest skills from GitHub Releases:
+
+- [coach-skill.zip](https://github.com/felixrieseberg/claude-coach/releases/latest/download/coach-skill.zip) — creates the plan
+- [coach-checkin-skill.zip](https://github.com/felixrieseberg/claude-coach/releases/latest/download/coach-checkin-skill.zip) — feedback and plan adaptation
 
 **Claude.ai:**
 
 1. Open [Claude.ai Settings](https://claude.ai/settings/capabilities)
 2. Enable "Code execution and file creation"
 3. In the allowed domains list, add `*.strava.com`
-4. Scroll down to "Skills" and click "Add skill", then upload the `coach-skill.zip` file
+4. Scroll down to "Skills" and click "Add skill", then upload `coach-skill.zip`
+5. Repeat step 4 for `coach-checkin-skill.zip`
 
 **Claude Code:**
 
-1. Run `/install-skill` and provide the path to the `coach-skill.zip` file you downloaded.
+1. Run `/install-skill` and provide the path to `coach-skill.zip`.
+2. Run `/install-skill` again and provide the path to `coach-checkin-skill.zip`.
 
 ### Creating a plan
 
@@ -85,6 +92,16 @@ In the next step, Claude will ask you about yourself, the event you're training 
 - Equipment access (pool availability, trainer, etc.)
 
 Claude will use this information to create a plan tailored to your current fitness level. The more detail you provide, the better your plan will be.
+
+### Checking In and Adapting the Plan
+
+Once you're training against the plan, come back every week or two with the JSON plan file and ask Claude to check in (using the `coach-checkin` skill). Claude will:
+
+- Compare what you actually did against what was planned (pulling from Strava/COROS again if connected, or asking you directly)
+- Give you honest feedback on consistency, training load, and progress toward race day
+- Adjust the upcoming weeks if you missed sessions, got sick or injured, traveled, or are ahead of schedule — and leave the plan alone if nothing needs to change
+
+> Help me check in on my training plan (attached) - it's been two weeks since I last looked at it.
 
 # About
 
