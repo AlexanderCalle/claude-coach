@@ -543,6 +543,16 @@ export default function ImportHelpModal({ onClose }: Props) {
               </div>
 
               <div className="warning-box">
+                <strong>Don't drop this file onto a calendar day.</strong> TrainingPeaks' calendar
+                has its own per-day upload box (accepting .fit, .gpx, .tcx, .pwx, etc.) for a single
+                workout - it will reject a multi-workout plan file with a "Could not parse" error.
+                The bulk importer is a separate screen under <strong>Settings</strong>, and it isn't
+                available on every account tier - if you can't find it, this CSV may not be usable
+                and exporting workouts individually (.fit) or the whole plan as a calendar (.ics)
+                are the fallbacks.
+              </div>
+
+              <div className="warning-box">
                 <strong>Note:</strong> Planned workouts imported this way carry schedule info (day,
                 title, description, duration, distance, TSS) but not structured intervals. For
                 device-guided structured workouts, export a Garmin (.fit) file instead -

@@ -258,7 +258,7 @@ export default function Sidebar({
                 <span className="export-icon">T</span>
                 <div>
                   <div className="export-name">TrainingPeaks (.csv)</div>
-                  <div className="export-desc">Full plan, all workouts</div>
+                  <div className="export-desc">Bulk import via Settings, not calendar drop</div>
                 </div>
               </button>
               <div className="export-divider"></div>
