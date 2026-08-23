@@ -22,7 +22,10 @@ import { loadTemplate, injectPlanData } from "../lib/render-plan.js";
 import { readHistory, readPlan, writePlan } from "./store.js";
 
 const PORT = Number(process.env.PORT) || 3000;
-const PLAN_TOKEN = process.env.PLAN_TOKEN;
+// Trimmed so a trailing newline picked up from how the secret was set (a
+// pasted value, a file-backed env var, a secrets manager) doesn't silently
+// make every request fail to authenticate.
+const PLAN_TOKEN = process.env.PLAN_TOKEN?.trim();
 const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB - generous for a training plan JSON doc
 
 if (!PLAN_TOKEN) {
@@ -32,11 +35,20 @@ if (!PLAN_TOKEN) {
   process.exit(1);
 }
 
+// A short, non-secret fingerprint of the token in effect - logged at boot so
+// you can confirm the container actually picked up the value you set,
+// without ever printing (or needing to paste anywhere) the token itself.
+// Compare it against: printf '%s' "$RUNNIFY_SERVER_TOKEN" | sha256sum | cut -c1-8
+function fingerprint(token: string): string {
+  return createHash("sha256").update(token).digest("hex").slice(0, 8);
+}
+
 function tokenMatches(candidate: string | null): boolean {
   if (!candidate) return false;
+  const trimmed = candidate.trim();
   // Compare fixed-length digests rather than the raw strings so neither the
   // length nor the content of a wrong guess is observable via timing.
-  const a = createHash("sha256").update(candidate).digest();
+  const a = createHash("sha256").update(trimmed).digest();
   const b = createHash("sha256")
     .update(PLAN_TOKEN as string)
     .digest();
@@ -180,4 +192,8 @@ const server = createServer((req, res) => {
 
 server.listen(PORT, () => {
   log.ready(`Plan server listening on :${PORT}`);
+  log.info(
+    `Auth token fingerprint: ${fingerprint(PLAN_TOKEN as string)} ` +
+      `(compare with: printf '%s' "$RUNNIFY_SERVER_TOKEN" | sha256sum | cut -c1-8)`
+  );
 });
