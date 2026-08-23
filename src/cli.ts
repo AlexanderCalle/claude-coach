@@ -164,9 +164,9 @@ function parseArgs(): CliArgs {
 
 function printHelp(): void {
   console.log(`
-Claude Coach - Training Plan Tools
+Runnify Assistant - Training Plan Tools
 
-Usage: npx claude-coach <command> [options]
+Usage: npx runnify-assistant <command> [options]
 
 Commands:
   sync              Sync activities from Strava
@@ -201,22 +201,22 @@ Query Options:
 
 Examples:
   # Headless auth flow (for Claude/automated environments)
-  npx claude-coach auth --client-id=12345 --client-secret=abc123
+  npx runnify-assistant auth --client-id=12345 --client-secret=abc123
   # User clicks URL, copies code from failed redirect
-  npx claude-coach auth --code=AUTHORIZATION_CODE
-  npx claude-coach sync
+  npx runnify-assistant auth --code=AUTHORIZATION_CODE
+  npx runnify-assistant sync
 
   # Interactive auth flow (opens browser)
-  npx claude-coach sync --client-id=12345 --client-secret=abc123
+  npx runnify-assistant sync --client-id=12345 --client-secret=abc123
 
   # Render a training plan to HTML
-  npx claude-coach render plan.json --output my-plan.html
+  npx runnify-assistant render plan.json --output my-plan.html
 
   # Render a fragment suitable for publishing as a Claude Artifact
-  npx claude-coach render plan.json --output plan-artifact.html --fragment
+  npx runnify-assistant render plan.json --output plan-artifact.html --fragment
 
   # Query the database
-  npx claude-coach query "SELECT * FROM weekly_volume LIMIT 5"
+  npx runnify-assistant query "SELECT * FROM weekly_volume LIMIT 5"
 `);
 }
 
@@ -285,7 +285,7 @@ async function runAuth(args: AuthArgs): Promise<void> {
 
     saveTokens(tokens);
     log.success(`Authenticated as ${data.athlete.firstname} ${data.athlete.lastname}`);
-    log.ready("Now run: npx claude-coach sync");
+    log.ready("Now run: npx runnify-assistant sync");
     return;
   }
 
@@ -388,7 +388,7 @@ function insertAthlete(athlete: {
 }
 
 async function runSync(args: SyncArgs): Promise<void> {
-  log.box("Claude Coach - Strava Sync");
+  log.box("Runnify Assistant - Strava Sync");
 
   // Step 0: Initialize SQLite backend
   await initDatabase();

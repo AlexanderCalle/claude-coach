@@ -1,10 +1,10 @@
-# Releasing Claude Coach
+# Releasing Runnify Assistant
 
-This document describes how to release a new version of Claude Coach.
+This document describes how to release a new version of Runnify Assistant.
 
 ## Prerequisites
 
-- npm account with publish access to `claude-coach`
+- npm account with publish access to `runnify-assistant`
 - GitHub account with push access to the repository
 - GitHub CLI (`gh`) installed and authenticated
 
@@ -43,7 +43,7 @@ npm run build:skill-checkin
 npm publish
 ```
 
-This publishes the package to npm, making it available via `npx claude-coach`.
+This publishes the package to npm, making it available via `npx runnify-assistant`.
 
 ### 4. Push to GitHub
 
@@ -69,7 +69,7 @@ gh release create "v$VERSION" \
 
 Or manually:
 
-1. Go to https://github.com/felixrieseberg/claude-coach/releases/new
+1. Go to https://github.com/AlexanderCalle/runnify-assistant/releases/new
 2. Choose the tag you just pushed (e.g., `v0.1.0`)
 3. Set the release title (e.g., `v0.1.0`)
 4. Add release notes
@@ -92,15 +92,15 @@ gh release create "v$VERSION" --title "v$VERSION" --generate-notes dist/coach-sk
 
 ## What Gets Released
 
-| Artifact           | Destination                    | Contents                                                              |
-| ------------------ | ------------------------------ | --------------------------------------------------------------------- |
-| npm package        | npmjs.com/package/claude-coach | CLI tool, viewer builder                                              |
-| Skill zip          | GitHub Releases                | `skill/` directory for Claude.ai — creates plans                      |
-| Check-in skill zip | GitHub Releases                | `skill-checkin/` directory for Claude.ai — feedback + plan adaptation |
+| Artifact           | Destination                         | Contents                                                              |
+| ------------------ | ----------------------------------- | --------------------------------------------------------------------- |
+| npm package        | npmjs.com/package/runnify-assistant | CLI tool, viewer builder                                              |
+| Skill zip          | GitHub Releases                     | `skill/` directory for Claude.ai — creates plans                      |
+| Check-in skill zip | GitHub Releases                     | `skill-checkin/` directory for Claude.ai — feedback + plan adaptation |
 
 ## Verification
 
 After releasing:
 
-1. **npm**: Run `npx claude-coach --help` to verify the CLI works
+1. **npm**: Run `npx runnify-assistant --help` to verify the CLI works
 2. **Skill**: Download both zips from GitHub releases, install in Claude.ai, and test — create a plan with `coach-skill.zip`, then check in on it with `coach-checkin-skill.zip`

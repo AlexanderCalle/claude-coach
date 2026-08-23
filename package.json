@@ -1,11 +1,11 @@
 {
-  "name": "claude-coach",
+  "name": "runnify-assistant",
   "version": "0.1.0",
-  "author": "Felix Rieseberg <felix@felixrieseberg.com> (https://felixrieseberg.com)",
+  "author": "Alexander Callebaut <callebauta@hotmail.com> (https://alexandercallebaut.be)",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "claude-coach": "bin/claude-coach.js"
+    "runnify-assistant": "bin/runnify-assistant.js"
   },
   "files": [
     "bin",

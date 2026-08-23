@@ -795,7 +795,7 @@ export default function SettingsModal({ settings, onClose, onChange, onOpenImpor
             <>
               <div className="settings-section">
                 <div className="about-header">
-                  <h3 className="about-title">Claude Coach</h3>
+                  <h3 className="about-title">Runnify Assistant</h3>
                   <span className="about-version">v{version}</span>
                 </div>
                 <p className="about-description">
@@ -807,24 +807,15 @@ export default function SettingsModal({ settings, onClose, onChange, onOpenImpor
               <div className="settings-section">
                 <h4 className="settings-section-title">Created By</h4>
                 <div className="about-author">
-                  <span className="author-name">Felix Rieseberg</span>
+                  <span className="author-name">Alexander Callebaut</span>
                   <div className="author-links">
                     <a
-                      href="https://felixrieseberg.com"
+                      href="https://alexandercallebaut.be"
                       target="_blank"
                       rel="noopener"
                       className="author-link"
                     >
-                      felixrieseberg.com
-                    </a>
-                    <span className="author-separator">·</span>
-                    <a
-                      href="https://twitter.com/felixrieseberg"
-                      target="_blank"
-                      rel="noopener"
-                      className="author-link"
-                    >
-                      @felixrieseberg
+                      alexandercallebaut.be
                     </a>
                   </div>
                 </div>
@@ -834,7 +825,7 @@ export default function SettingsModal({ settings, onClose, onChange, onOpenImpor
                 <h4 className="settings-section-title">Links</h4>
                 <div className="about-links">
                   <a
-                    href="https://github.com/felixrieseberg/claude-coach"
+                    href="https://github.com/AlexanderCalle/runnify-assistant"
                     target="_blank"
                     rel="noopener"
                     className="about-link"

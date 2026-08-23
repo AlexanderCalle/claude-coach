@@ -1,6 +1,6 @@
-# Claude Coach
+# Runnify Assistant
 
-Claude Coach allows you to use Claude to create custom-tailored training programs for triathlons, marathons, and other endurance activities. Using a data-driven approach and principles from top training plans, Claude will create a training plan that's uniquely fit for you, your personal fitness, and the constraints you have in the next couple of weeks. Maybe you're recovering from an injury, maybe you're traveling and don't have access to a pool or track in a certain week - tell Claude about it and it'll create a plan that works for you.
+Runnify Assistant allows you to use Claude to create custom-tailored training programs for triathlons, marathons, and other endurance activities. Using a data-driven approach and principles from top training plans, Claude will create a training plan that's uniquely fit for you, your personal fitness, and the constraints you have in the next couple of weeks. Maybe you're recovering from an injury, maybe you're traveling and don't have access to a pool or track in a certain week - tell Claude about it and it'll create a plan that works for you.
 
 The output is a beautiful training plan app that allows you to add, edit, or move workouts, mark them as complete, and update key training data like heart rate zones, LTHR, threshold paces, FTP, and others. Your data is kept locally in your browser.
 
@@ -8,7 +8,7 @@ Workouts can be exported as simple calendar events (.ics), Zwift (.zwo), Garmin 
 
 ## Examples
 
-See example training plans at [felixrieseberg.github.io/claude-coach](https://felixrieseberg.github.io/claude-coach/#demos).
+See example training plans at [alexandercalle.github.io/runnify-assistant](https://alexandercalle.github.io/runnify-assistant/#demos).
 
 ## Installation & Creating a training plan
 
@@ -18,12 +18,12 @@ Syncing all your Strava activities and creating a tailored training plan takes c
 
 ### Installing the Skills
 
-Claude Coach is two skills: **`coach`** creates the initial plan, and **`coach-checkin`** is what you come back to later for feedback and to adjust the plan as training actually happens. Install both — a plan you can never revisit stops matching reality within a couple of weeks.
+Runnify Assistant is two skills: **`coach`** creates the initial plan, and **`coach-checkin`** is what you come back to later for feedback and to adjust the plan as training actually happens. Install both — a plan you can never revisit stops matching reality within a couple of weeks.
 
 Download the latest skills from GitHub Releases:
 
-- [coach-skill.zip](https://github.com/felixrieseberg/claude-coach/releases/latest/download/coach-skill.zip) — creates the plan
-- [coach-checkin-skill.zip](https://github.com/felixrieseberg/claude-coach/releases/latest/download/coach-checkin-skill.zip) — feedback and plan adaptation
+- [coach-skill.zip](https://github.com/AlexanderCalle/runnify-assistant/releases/latest/download/coach-skill.zip) — creates the plan
+- [coach-checkin-skill.zip](https://github.com/AlexanderCalle/runnify-assistant/releases/latest/download/coach-checkin-skill.zip) — feedback and plan adaptation
 
 **Claude.ai:**
 
@@ -54,7 +54,7 @@ Claude needs a `Client ID` and `Client Secret` to access your Strava activities.
 
 1. Go to [strava.com/settings/api](https://www.strava.com/settings/api) and log in with your Strava account
 2. You'll see a form titled "My API Application" - fill it out:
-   - **Application Name**: Enter anything you like (e.g., "Claude Coach")
+   - **Application Name**: Enter anything you like (e.g., "Runnify Assistant")
    - **Category**: Select "Data Importer"
    - **Club**: Leave this blank
    - **Website**: Enter any URL (e.g., `https://claude.ai`)
@@ -105,4 +105,4 @@ Once you're training against the plan, come back every week or two with the JSON
 
 # About
 
-Claude Coach is an independent, open-source project and is not made by, endorsed by, or affiliated with Anthropic, PBC. "Claude" is a trademark of Anthropic. This tool is a skill/plugin that works with Claude products but is developed and maintained independently. License: MIT.
+Runnify Assistant is an independent, open-source project and is not made by, endorsed by, or affiliated with Anthropic, PBC. "Claude" is a trademark of Anthropic. This tool is a skill/plugin that works with Claude products but is developed and maintained independently. License: MIT.
