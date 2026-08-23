@@ -15,6 +15,7 @@ import { generateZwo, isZwoSupported } from "./zwo";
 import { generateFit, isFitSupported } from "./fit";
 import { generateMrc, isErgSupported } from "./erg";
 import { generateIcs } from "./ics";
+import { generateTrainingPeaksCsv } from "./trainingpeaks";
 import JSZip from "jszip";
 
 export type ExportFormat = "zwo" | "fit" | "mrc" | "ics";
@@ -267,6 +268,25 @@ export async function exportAllWorkouts(
   }
 
   return { exported, skipped, errors };
+}
+
+/**
+ * Export the full training plan as a TrainingPeaks-compatible CSV
+ */
+export function exportPlanToTrainingPeaks(plan: TrainingPlan): ExportResult {
+  try {
+    const csvContent = generateTrainingPeaksCsv(plan);
+    const safeName = sanitizeFilename(plan.meta.event);
+    const filename = `${safeName}_trainingpeaks.csv`;
+    downloadFile(csvContent, filename, "text/csv");
+    return { success: true, filename };
+  } catch (error) {
+    return {
+      success: false,
+      filename: "",
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
 }
 
 // Re-export format-specific helpers

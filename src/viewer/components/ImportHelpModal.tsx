@@ -5,13 +5,14 @@ interface Props {
   onClose: () => void;
 }
 
-type HelpTab = "calendar" | "zwift" | "garmin" | "trainerroad" | "generic";
+type HelpTab = "calendar" | "zwift" | "garmin" | "trainerroad" | "trainingpeaks" | "generic";
 
 const tabs: { id: HelpTab; label: string }[] = [
   { id: "calendar", label: "Calendar Apps" },
   { id: "zwift", label: "Zwift" },
   { id: "garmin", label: "Garmin" },
   { id: "trainerroad", label: "TrainerRoad" },
+  { id: "trainingpeaks", label: "TrainingPeaks" },
   { id: "generic", label: "Other Apps" },
 ];
 
@@ -504,6 +505,52 @@ export default function ImportHelpModal({ onClose }: Props) {
             </div>
           )}
 
+          {/* TrainingPeaks Tab */}
+          {activeTab === "trainingpeaks" && (
+            <div className="help-section">
+              <div className="file-type-badge">.csv file</div>
+              <p className="help-intro">
+                The TrainingPeaks CSV contains your whole plan as scheduled workouts (title,
+                description, planned duration, distance, and TSS where available), ready to import
+                in one go.
+              </p>
+
+              <div className="app-guide">
+                <h4 className="app-name">TrainingPeaks (Web)</h4>
+                <ol className="step-list">
+                  <li>
+                    Go to{" "}
+                    <a href="https://app.trainingpeaks.com" target="_blank" rel="noopener">
+                      app.trainingpeaks.com
+                    </a>{" "}
+                    and sign in
+                  </li>
+                  <li>
+                    Open <strong>Settings</strong> and look for{" "}
+                    <strong>Import Planned Workouts</strong>
+                  </li>
+                  <li>Upload the .csv file you exported</li>
+                  <li>
+                    Match up each column on the mapping screen (Date, Title, Workout Type, Comments,
+                    Duration, Distance, TSS)
+                  </li>
+                  <li>Confirm and complete the import</li>
+                </ol>
+                <div className="tip">
+                  <strong>Tip:</strong> TrainingPeaks lets you re-map columns during import, so it's
+                  fine if a header doesn't match exactly - just point it at the right field.
+                </div>
+              </div>
+
+              <div className="warning-box">
+                <strong>Note:</strong> Planned workouts imported this way carry schedule info (day,
+                title, description, duration, distance, TSS) but not structured intervals. For
+                device-guided structured workouts, export a Garmin (.fit) file instead -
+                TrainingPeaks accepts those too.
+              </div>
+            </div>
+          )}
+
           {/* Generic/Other Apps Tab */}
           {activeTab === "generic" && (
             <div className="help-section">
@@ -573,6 +620,19 @@ export default function ImportHelpModal({ onClose }: Props) {
                   <span className="app-tag">Wahoo SYSTM</span>
                   <span className="app-tag">PerfPro</span>
                   <span className="app-tag">Golden Cheetah</span>
+                </div>
+              </div>
+
+              <div className="file-format-guide">
+                <h4 className="format-title">
+                  <span className="file-type-badge small">.csv</span> TrainingPeaks Plan File
+                </h4>
+                <p>
+                  Your entire training plan as scheduled workouts (title, description, duration,
+                  distance, TSS) for bulk import into TrainingPeaks.
+                </p>
+                <div className="compatible-apps">
+                  <span className="app-tag">TrainingPeaks</span>
                 </div>
               </div>
 

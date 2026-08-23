@@ -4,7 +4,7 @@ Runnify Assistant allows you to use Claude to create custom-tailored training pr
 
 The output is a beautiful training plan app that allows you to add, edit, or move workouts, mark them as complete, and update key training data like heart rate zones, LTHR, threshold paces, FTP, and others. Your data is kept locally in your browser.
 
-Workouts can be exported as simple calendar events (.ics), Zwift (.zwo), Garmin (.fit), or TrainerRoad/ERG (.mrc) workouts.
+Workouts can be exported as simple calendar events (.ics), Zwift (.zwo), Garmin (.fit), TrainerRoad/ERG (.mrc) workouts, or as a TrainingPeaks-compatible CSV for bulk-importing the whole plan.
 
 ## Examples
 

@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import type { TrainingPlan, Sport } from "../../schema/training-plan";
 import type { Settings } from "../stores/settings";
 import { formatEventDate, getDaysToEvent, getSportIcon } from "../lib/utils";
-import { exportPlanToCalendar, exportAllWorkouts } from "../lib/export/index";
+import {
+  exportPlanToCalendar,
+  exportPlanToTrainingPeaks,
+  exportAllWorkouts,
+} from "../lib/export/index";
 import { cx } from "../lib/cx";
 
 interface Props {
@@ -111,6 +115,20 @@ export default function Sidebar({
     setTimeout(() => setExportStatus(null), 3000);
   }
 
+  function handleExportTrainingPeaks() {
+    setShowExportMenu(false);
+    setExportStatus({ message: "Exporting TrainingPeaks CSV...", isError: false });
+
+    const result = exportPlanToTrainingPeaks(plan);
+    if (result.success) {
+      setExportStatus({ message: `Downloaded ${result.filename}`, isError: false });
+    } else {
+      setExportStatus({ message: result.error || "Export failed", isError: true });
+    }
+
+    setTimeout(() => setExportStatus(null), 3000);
+  }
+
   async function handleExportAllWorkouts(format: "zwo" | "fit" | "mrc") {
     setShowExportMenu(false);
     setExportStatus({ message: `Exporting ${format.toUpperCase()} files...`, isError: false });
@@ -206,7 +224,9 @@ export default function Sidebar({
             </svg>
             <div className="export-main-text">
               <span className="export-main-title">Export Plan</span>
-              <span className="export-main-desc">Calendar, Zwift, Garmin, TrainerRoad</span>
+              <span className="export-main-desc">
+                Calendar, Zwift, Garmin, TrainerRoad, TrainingPeaks
+              </span>
             </div>
             <svg
               className={cx("dropdown-arrow", showExportMenu && "open")}
@@ -232,6 +252,13 @@ export default function Sidebar({
                 <div>
                   <div className="export-name">Calendar (.ics)</div>
                   <div className="export-desc">Apple, Google, Outlook</div>
+                </div>
+              </button>
+              <button className="export-option" onClick={handleExportTrainingPeaks}>
+                <span className="export-icon">T</span>
+                <div>
+                  <div className="export-name">TrainingPeaks (.csv)</div>
+                  <div className="export-desc">Full plan, all workouts</div>
                 </div>
               </button>
               <div className="export-divider"></div>
