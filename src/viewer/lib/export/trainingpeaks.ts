@@ -20,6 +20,12 @@
  * TrainingPeaks' import screen lets you re-map columns after upload, so exact
  * header names matter less than getting sensible, well-labeled data into each
  * column.
+ *
+ * Every field is flattened to a single line before being written. Multi-line
+ * quoted CSV cells are valid RFC 4180, but TrainingPeaks' bulk importer (like
+ * many spreadsheet-upload widgets) parses line-by-line and chokes on a
+ * quoted field that spans multiple physical lines, so embedded newlines in
+ * workout descriptions get collapsed to " | " instead.
  */
 
 import type { TrainingPlan, TrainingDay, Workout, Sport } from "../../../schema/training-plan";
@@ -55,6 +61,18 @@ function csvEscape(value: string): string {
 }
 
 /**
+ * Collapse embedded newlines/blank lines into a single-line separator so no
+ * CSV cell spans multiple physical lines
+ */
+function flattenText(text: string): string {
+  return text
+    .split(/\r\n|\r|\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join(" | ");
+}
+
+/**
  * Convert minutes to decimal hours, as TrainingPeaks expects for PlannedDuration
  */
 function formatPlannedDuration(minutes: number | undefined): string {
@@ -67,10 +85,10 @@ function formatPlannedDuration(minutes: number | undefined): string {
  */
 function buildCoachComments(workout: Workout): string {
   const parts: string[] = [];
-  if (workout.description) parts.push(workout.description);
-  if (workout.humanReadable) parts.push(workout.humanReadable);
-  if (workout.notes) parts.push(workout.notes);
-  return parts.join("\n\n");
+  if (workout.description) parts.push(flattenText(workout.description));
+  if (workout.humanReadable) parts.push(flattenText(workout.humanReadable));
+  if (workout.notes) parts.push(flattenText(workout.notes));
+  return parts.join(" | ");
 }
 
 /**
@@ -88,7 +106,7 @@ function resolveWorkoutType(workout: Workout): string {
 function generateRow(workout: Workout, day: TrainingDay): string[] {
   return [
     day.date,
-    workout.name || WORKOUT_TYPE_MAP[workout.sport] || "Workout",
+    flattenText(workout.name || WORKOUT_TYPE_MAP[workout.sport] || "Workout"),
     resolveWorkoutType(workout),
     buildCoachComments(workout),
     formatPlannedDuration(workout.durationMinutes),

@@ -292,7 +292,7 @@ describe("TrainingPeaks CSV Export", () => {
       expect(rows[1]).toBe("2025-01-06,Threshold Swim,Swim,,1.00,,45");
     });
 
-    it("escapes commas, quotes, and newlines in text fields", () => {
+    it("escapes commas and quotes in text fields", () => {
       const plan = createMockPlan({
         weeks: [
           {
@@ -328,7 +328,51 @@ describe("TrainingPeaks CSV Export", () => {
       const csv = generateTrainingPeaksCsv(plan);
 
       expect(csv).toContain('"Intervals, ""Hard"""');
-      expect(csv).toContain('"Run hard\nThen recover"');
+      expect(csv).toContain("Run hard | Then recover");
+    });
+
+    it("collapses embedded newlines so no cell spans multiple lines", () => {
+      const plan = createMockPlan({
+        weeks: [
+          {
+            weekNumber: 1,
+            startDate: "2025-01-06",
+            endDate: "2025-01-12",
+            phase: "Base",
+            focus: "Build",
+            targetHours: 8,
+            isRecoveryWeek: false,
+            summary: { totalHours: 8, bySport: {} },
+            days: [
+              {
+                date: "2025-01-06",
+                dayOfWeek: "Monday",
+                workouts: [
+                  {
+                    id: "w1-mon",
+                    sport: "run",
+                    type: "endurance",
+                    name: "Long Run",
+                    description: "Zone 2 throughout",
+                    humanReadable: "Warm-up: 15min easy\n\nMain: 90min Z2\nCool-down: 15min easy",
+                    durationMinutes: 120,
+                    completed: false,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      const csv = generateTrainingPeaksCsv(plan);
+      const rows = csv.split("\r\n");
+
+      // header + 1 workout row, no extra physical lines from embedded newlines
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toContain(
+        "Zone 2 throughout | Warm-up: 15min easy | Main: 90min Z2 | Cool-down: 15min easy"
+      );
     });
   });
 });
