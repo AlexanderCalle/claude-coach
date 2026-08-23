@@ -8,7 +8,7 @@ const PLACEHOLDER_PLAN = JSON.stringify({ meta: { id: "placeholder" } });
 
 export default function Home() {
   // Plan data is embedded in the page as a <script id="plan-data"> tag by
-  // `npx claude-coach render` (which swaps the placeholder JSON below for the
+  // `npx runnify-assistant render` (which swaps the placeholder JSON below for the
   // real plan). It can only be read client-side - the page is statically
   // exported, so there is no `document` during the Next.js build - hence the
   // effect instead of reading it at module scope.

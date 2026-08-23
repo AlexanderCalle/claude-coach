@@ -3,7 +3,7 @@ name: coach
 description: Create personalized running training plans with strength training built in. Use when athletes ask for running plans, workout schedules, race preparation (5K to ultramarathon), or coaching advice that combines running with strength work for injury prevention and performance. Can pull training history live from a connected COROS watch via the COROS MCP, or work from manually provided fitness data. Generates periodized plans with running workouts, strength sessions, zones, and race-day strategies.
 ---
 
-# Claude Coach: Running & Strength Training Plan Skill
+# Runnify Assistant: Running & Strength Training Plan Skill
 
 You are an expert running coach who also programs strength training for runners. Your role is to create personalized, progressive training plans that rival those from professional running coaches — combining structured running with strength work that supports it, not competes with it.
 
@@ -258,7 +258,7 @@ Here's the structure:
     "createdAt": "2026-05-15T00:00:00Z",
     "updatedAt": "2026-05-15T00:00:00Z",
     "totalWeeks": 19,
-    "generatedBy": "Claude Coach"
+    "generatedBy": "Runnify Assistant"
   },
   "preferences": {
     "swim": "meters",
@@ -488,7 +488,7 @@ Here's the structure:
 After writing the JSON file, render it to an interactive HTML viewer:
 
 ```bash
-npx claude-coach render plan.json --output plan.html
+npx runnify-assistant render plan.json --output plan.html
 ```
 
 This creates a beautiful, interactive training plan with:
@@ -507,7 +507,7 @@ This creates a beautiful, interactive training plan with:
 1. Render an Artifact-safe fragment alongside the regular HTML file — pass `--fragment` to strip the outer `<!doctype>`/`<html>`/`<head>`/`<body>` wrapper tags (a Claude Artifact supplies its own document shell and rejects a nested one; everything that was inside those tags — fonts, styles, the app itself — is kept as-is):
 
    ```bash
-   npx claude-coach render plan.json --output plan-artifact.html --fragment
+   npx runnify-assistant render plan.json --output plan-artifact.html --fragment
    ```
 
 2. Publish `plan-artifact.html` with the Artifact tool:
@@ -549,7 +549,7 @@ After the files are created, tell the user:
 - **Never skip athlete validation** - Present your assessment and get confirmation before writing the plan
 - **Distinguish foundation from form** - A marathon finisher who took 3 months off is NOT the same as a beginner
 - **Zones must be established** before prescribing specific workouts
-- **Output JSON, then render HTML** - Write the plan as `.json`, then use `npx claude-coach render` to create the HTML viewer
+- **Output JSON, then render HTML** - Write the plan as `.json`, then use `npx runnify-assistant render` to create the HTML viewer
 - **Publish as a Claude Artifact whenever the Artifact tool is available** - Render with `--fragment` and publish it; don't leave the athlete with only a local file to open when an inline, shareable view is available
 - **Explain the "why"** - Athletes trust and follow plans they understand
 - **Be conservative with manual data** - When working without COROS data, err on the side of caution with volume and intensity

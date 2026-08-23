@@ -18,7 +18,7 @@ function createMockPlan(overrides: Partial<TrainingPlan> = {}): TrainingPlan {
       createdAt: "2025-01-01T00:00:00Z",
       updatedAt: "2025-01-01T00:00:00Z",
       totalWeeks: 24,
-      generatedBy: "Claude Coach",
+      generatedBy: "Runnify Assistant",
     },
     preferences: {
       swim: "meters",
@@ -81,7 +81,7 @@ describe("ICS Export", () => {
       // Check required iCalendar headers
       expect(ics).toContain("BEGIN:VCALENDAR");
       expect(ics).toContain("VERSION:2.0");
-      expect(ics).toContain("PRODID:-//Claude Coach//Training Plan//EN");
+      expect(ics).toContain("PRODID:-//Runnify Assistant//Training Plan//EN");
       expect(ics).toContain("CALSCALE:GREGORIAN");
       expect(ics).toContain("METHOD:PUBLISH");
       expect(ics).toContain("END:VCALENDAR");
@@ -158,8 +158,8 @@ describe("ICS Export", () => {
       expect(ics).toContain("DTSTART;VALUE=DATE:20250107");
 
       // Check UIDs are unique
-      expect(ics).toContain("UID:w1-mon-run-2025-01-06@claude-coach");
-      expect(ics).toContain("UID:w1-tue-swim-2025-01-07@claude-coach");
+      expect(ics).toContain("UID:w1-mon-run-2025-01-06@runnify-assistant");
+      expect(ics).toContain("UID:w1-tue-swim-2025-01-07@runnify-assistant");
     });
 
     it("properly escapes special characters (commas, semicolons, newlines)", () => {
@@ -174,7 +174,7 @@ describe("ICS Export", () => {
           createdAt: "2025-01-01T00:00:00Z",
           updatedAt: "2025-01-01T00:00:00Z",
           totalWeeks: 24,
-          generatedBy: "Claude Coach",
+          generatedBy: "Runnify Assistant",
         },
         weeks: [
           {
@@ -231,14 +231,14 @@ describe("ICS Export", () => {
           createdAt: "2025-01-01T00:00:00Z",
           updatedAt: "2025-01-01T00:00:00Z",
           totalWeeks: 16,
-          generatedBy: "Claude Coach",
+          generatedBy: "Runnify Assistant",
         },
       });
 
       const ics = generateIcs(plan);
 
       // Check race day event
-      expect(ics).toContain("UID:race-day@claude-coach");
+      expect(ics).toContain("UID:race-day@runnify-assistant");
       expect(ics).toContain("DTSTART;VALUE=DATE:20250421");
       expect(ics).toContain("SUMMARY:\u{1F3C6} RACE DAY: Boston Marathon");
       expect(ics).toContain("DESCRIPTION:Race day for Boston Marathon!");
