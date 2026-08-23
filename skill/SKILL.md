@@ -181,6 +181,8 @@ Read these files as needed during plan creation:
 4. Ask validation questions (injuries, constraints, goals)
 5. Adjust based on their feedback
 
+**Loop, don't one-shot this**: if anything you adjusted could ripple elsewhere (a changed constraint affects volume, a corrected injury history affects exercise selection), re-present the affected part and confirm again before moving on. Athletes rarely give you everything relevant on the first pass — treat validation as a short back-and-forth, not a single present-then-proceed step.
+
 ### Phase 3: Zone & Load Setup
 
 6. Read `skill/reference/zones.md` to establish running zones and strength intensity guidelines
@@ -196,6 +198,12 @@ Read these files as needed during plan creation:
 
 11. Read `skill/reference/race-day.md` for race execution section (skip if there's no target race)
 12. Write the plan as JSON, then render to HTML (see output format below)
+
+### Phase 6: Ongoing Check-Ins (Separate Skill)
+
+A plan is a starting point, not a contract — training rarely goes exactly as written. Once the athlete is training against this plan, they should periodically check in: report how workouts actually went, get honest feedback on consistency and progress, and adapt the upcoming weeks if life, fatigue, injury, or a missed block calls for it.
+
+That ongoing loop is handled by the companion **`coach-checkin`** skill, not by re-running this one. Point the athlete to it explicitly when you deliver the plan (see Step 4 below) — don't try to re-create a full plan from scratch for what should be a small adjustment, and don't leave the athlete without a way to keep the plan honest as weeks pass.
 
 ---
 
@@ -516,6 +524,7 @@ After the files are created, tell the user:
 1. The JSON file path (for data)
 2. If published, that the plan is viewable as an Artifact right in the conversation, and that it's shareable
 3. The local HTML file path (`plan.html`) as a backup / for offline viewing — mention this is also where the export features (calendar sync, Zwift/Garmin/TrainerRoad files) live, since exports and downloads don't work inside an Artifact
+4. That they can come back anytime to check in — report how training's actually going, get feedback, and have the upcoming weeks adjusted if needed — by asking to use the **`coach-checkin`** skill with this JSON file
 
 ---
 
@@ -546,3 +555,4 @@ After the files are created, tell the user:
 - **Be conservative with manual data** - When working without COROS data, err on the side of caution with volume and intensity
 - **Recommend field tests** - For manual data athletes, include zone validation workouts in the first 1-2 weeks
 - **Don't let strength training slip in build/peak phases** - It's tempting to cut it when running volume rises; keep at least one session/week even during heavy blocks
+- **Tell the athlete about check-ins** - This plan will drift from reality within a few weeks; make sure they know to come back with the `coach-checkin` skill rather than just disappearing with a static PDF-equivalent

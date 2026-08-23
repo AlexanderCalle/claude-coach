@@ -16,10 +16,11 @@
   ],
   "scripts": {
     "start": "tsx src/cli.ts",
-    "build": "npm run build:ts && npm run build:viewer && npm run build:skill",
+    "build": "npm run build:ts && npm run build:viewer && npm run build:skill && npm run build:skill-checkin",
     "build:ts": "tsc && cp src/db/schema.sql dist/db/",
     "build:viewer": "next build src/viewer && node scripts/inline-next-build.mjs",
     "build:skill": "mkdir -p dist && cd skill && zip -r ../dist/coach-skill.zip . -x '*.DS_Store' && echo 'Skill packaged to dist/coach-skill.zip'",
+    "build:skill-checkin": "mkdir -p dist && cd skill-checkin && zip -r ../dist/coach-checkin-skill.zip . -x '*.DS_Store' && echo 'Skill packaged to dist/coach-checkin-skill.zip'",
     "build:website": "node scripts/build-website.js",
     "dev": "tsx watch src/cli.ts",
     "dev:viewer": "next dev src/viewer",
