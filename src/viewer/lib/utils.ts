@@ -42,6 +42,18 @@ export function formatDistance(
   return `${Math.round(meters)}m`;
 }
 
+// targetHR/targetPace/targetPower are typed as { low, high } on Workout, but
+// plans generated outside the strict TS path (e.g. some multi-sport plans)
+// have shipped them as a single pre-formatted string instead. Handle both so
+// a malformed range renders as-is rather than "undefined-undefinedW".
+type RangeLike = { low: number | string; high: number | string } | string;
+
+export function formatRange(value: RangeLike | undefined | null, suffix = ""): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return `${value.low}–${value.high}${suffix}`;
+}
+
 export function formatDate(dateStr: string): string {
   const date = parseDate(dateStr);
   return date.toLocaleDateString("en-US", {

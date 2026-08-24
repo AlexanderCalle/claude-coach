@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Workout, TrainingDay, Sport, WorkoutType } from "../../schema/training-plan";
 import type { Settings } from "../stores/settings";
-import { formatDuration, formatDistance, formatDate, getZoneInfo } from "../lib/utils";
+import { formatDuration, formatDistance, formatDate, getZoneInfo, formatRange } from "../lib/utils";
 import {
   exportWorkout,
   getAvailableFormats,
@@ -189,7 +189,9 @@ export default function WorkoutModal({
           {currentMode === "view" ? (
             <div>
               <div className={cx("modal-sport-badge", displayWorkout.sport)}>
-                {displayWorkout.sport.toUpperCase()}
+                {displayWorkout.type && displayWorkout.type !== displayWorkout.sport
+                  ? `${displayWorkout.sport.toUpperCase()} · ${displayWorkout.type.toUpperCase()}`
+                  : displayWorkout.sport.toUpperCase()}
               </div>
               <h2 className="modal-title">{displayWorkout.name}</h2>
               <div className="modal-date">{formatDate(day.date)}</div>
@@ -202,9 +204,16 @@ export default function WorkoutModal({
               <div className="modal-date">{formatDate(day.date)}</div>
             </div>
           )}
-          <button className="modal-close" onClick={onClose}>
-            ×
-          </button>
+          <div className="modal-header-actions">
+            {currentMode === "view" ? (
+              <button className="modal-edit-btn" onClick={startEdit}>
+                Edit
+              </button>
+            ) : null}
+            <button className="modal-close" onClick={onClose}>
+              ×
+            </button>
+          </div>
         </div>
 
         <div className="modal-body">
@@ -240,7 +249,33 @@ export default function WorkoutModal({
                     <div className="modal-stat-label">Target Zone</div>
                   </div>
                 ) : null}
+                {displayWorkout.rpe ? (
+                  <div className="modal-stat">
+                    <div className="modal-stat-value">{displayWorkout.rpe}</div>
+                    <div className="modal-stat-label">RPE Target</div>
+                  </div>
+                ) : null}
               </div>
+
+              {displayWorkout.targetPace ||
+              displayWorkout.targetHR ||
+              displayWorkout.targetPower ? (
+                <div className="modal-tags">
+                  {displayWorkout.targetPace ? (
+                    <span className="modal-tag">{formatRange(displayWorkout.targetPace)}</span>
+                  ) : null}
+                  {displayWorkout.targetHR ? (
+                    <span className="modal-tag">
+                      HR {formatRange(displayWorkout.targetHR, " bpm")}
+                    </span>
+                  ) : null}
+                  {displayWorkout.targetPower ? (
+                    <span className="modal-tag">
+                      {formatRange(displayWorkout.targetPower, "W")}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
 
               {displayWorkout.description ? (
                 <div className="modal-section">
@@ -394,12 +429,6 @@ export default function WorkoutModal({
           {currentMode === "view" ? (
             <>
               <div className="footer-left">
-                <button className="icon-btn edit" onClick={startEdit} title="Edit">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
                 <button
                   className="icon-btn delete"
                   onClick={() => setShowDeleteConfirm(true)}
