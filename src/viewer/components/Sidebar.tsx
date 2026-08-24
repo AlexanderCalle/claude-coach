@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { TrainingPlan, Sport } from "../../schema/training-plan";
 import type { Settings } from "../stores/settings";
-import { formatEventDate, getDaysToEvent, getSportIcon } from "../lib/utils";
+import { formatEventDate, getDaysToEvent, getSportIcon, getTodayISO } from "../lib/utils";
 import { exportPlanToCalendar, exportAllWorkouts } from "../lib/export/index";
 import { cx } from "../lib/cx";
 
@@ -75,6 +75,14 @@ export default function Sidebar({
   const progressOffset = 377 - (stats.progress / 100) * 377;
   const daysToEvent = getDaysToEvent(plan.meta?.eventDate ?? "");
 
+  // Which week today falls in, so the block list can show "done" / the
+  // current week number / "—" for phases the same way the week cards do.
+  const currentWeekNumber = useMemo(() => {
+    const today = getTodayISO();
+    const week = plan.weeks?.find((w) => today >= w.startDate && today <= w.endDate);
+    return week?.weekNumber ?? null;
+  }, [plan]);
+
   const availableSports = Object.entries(stats.sportHours)
     .filter(([, h]) => h > 0)
     .map(([sport]) => sport);
@@ -138,6 +146,35 @@ export default function Sidebar({
         <div className="event-date">{formatEventDate(plan.meta?.eventDate ?? "")}</div>
         <div className="athlete-name">{plan.meta?.athlete ?? "Athlete"}</div>
       </div>
+
+      {plan.phases?.length ? (
+        <div className="blocks-section">
+          <h3>Blocks</h3>
+          <div className="blocks-list">
+            {plan.phases.map((phase) => {
+              const phaseName = phase.name.toLowerCase();
+              const isCurrent =
+                currentWeekNumber != null &&
+                currentWeekNumber >= phase.startWeek &&
+                currentWeekNumber <= phase.endWeek;
+              const isDone = currentWeekNumber != null && currentWeekNumber > phase.endWeek;
+              return (
+                <div
+                  key={phase.name + phase.startWeek}
+                  className={cx("block-row", phaseName, isCurrent && "current")}
+                >
+                  <span className="block-name">
+                    {phase.name} · W{phase.startWeek}–{phase.endWeek}
+                  </span>
+                  <span className="block-status">
+                    {isDone ? "done" : isCurrent ? `W${currentWeekNumber}` : "—"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       <div className="progress-section">
         <div className="progress-ring-container">

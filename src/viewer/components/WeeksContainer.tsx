@@ -22,6 +22,11 @@ interface Props {
 
 const dayNameOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+// Preferred left-to-right order for the "run + strength"-style sport summary,
+// so it reads training-first rather than in whatever order sports happen to
+// appear in the plan data.
+const sportSummaryOrder: Workout["sport"][] = ["swim", "bike", "run", "brick", "strength", "race"];
+
 export default function WeeksContainer({
   plan,
   settings,
@@ -44,6 +49,19 @@ export default function WeeksContainer({
   // Every workout's effective date (respecting moves/edits/deletes/additions),
   // shared by both the week-cards and calendar views below.
   const workoutsByDate = useMemo(() => buildWorkoutsByDate(plan, changes), [plan, changes]);
+
+  // "run + strength" style summary of the sports actually scheduled in this plan.
+  const sportsSummary = useMemo(() => {
+    const present = new Set<string>();
+    plan.weeks?.forEach((week) => {
+      week.days?.forEach((day) => {
+        day.workouts?.forEach((w) => {
+          if (w.sport !== "rest") present.add(w.sport);
+        });
+      });
+    });
+    return sportSummaryOrder.filter((sport) => present.has(sport)).join(" + ");
+  }, [plan]);
 
   // Build a full 7-day week with workouts in their effective positions
   function buildFullWeek(weekData: TrainingWeek): TrainingDay[] {
@@ -110,6 +128,17 @@ export default function WeeksContainer({
 
   return (
     <>
+      <div className="plan-header">
+        <h1 className="plan-title">Training plan</h1>
+        <div className="plan-subtitle">
+          {plan.meta?.totalWeeks ?? plan.weeks?.length ?? 0} weeks
+          {plan.phases?.length
+            ? ` · ${plan.phases.length} block${plan.phases.length === 1 ? "" : "s"}`
+            : ""}
+          {sportsSummary ? ` · ${sportsSummary}` : ""}
+        </div>
+      </div>
+
       <div className="view-header">
         <div className="phase-timeline">
           {(plan.phases ?? []).map((phase) => {

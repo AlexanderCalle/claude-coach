@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { TrainingWeek, TrainingDay, Workout } from "../../schema/training-plan";
 import type { Settings } from "../stores/settings";
 import WorkoutCard from "./WorkoutCard";
-import { parseDate } from "../lib/utils";
+import { parseDate, formatDistance } from "../lib/utils";
 import { cx } from "../lib/cx";
 
 interface Props {
@@ -33,6 +33,15 @@ export default function WeekCard({
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const phaseName = (week.phase ?? "base").toLowerCase();
 
+  const totalKm = Object.values(week.summary?.bySport ?? {}).reduce(
+    (sum, sport) => sum + (sport?.km ?? 0),
+    0
+  );
+  // Route through formatDistance (same helper WorkoutCard uses) so the week
+  // total respects the athlete's km/mile preference instead of always
+  // showing km while the cards below it show miles.
+  const distanceLabel = totalKm > 0 ? formatDistance(totalKm * 1000, "run", settings) : "";
+
   function handleDragOver(e: React.DragEvent, date: string) {
     e.preventDefault();
     setDragOverDate(date);
@@ -59,6 +68,12 @@ export default function WeekCard({
         </div>
         <div className="week-hours">
           <span>{week.targetHours ?? 0}</span> hrs
+          {distanceLabel ? (
+            <>
+              {" "}
+              · <span>{distanceLabel}</span>
+            </>
+          ) : null}
         </div>
       </div>
 
